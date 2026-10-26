@@ -7,15 +7,15 @@
   "deploy/TRUENAS.md": "babf97d19b0e0d4ad9b2df7cc5266e6f7c32bbcd9e175ef6d82d437b9237d1c2",
   "docs/SOURCES.md": "a198519a7388d5238e13b182e17e983dce62f16f473e66ff666493ce3e1d234c",
   "docs/STATUS.md": "62bcd215128a8247f394799947f0b58af83e70eba807a3ad402598661a34e98f",
-  "docs/VALIDATION.md": "76c53210fa798a627bb1afa98267f7744e5fbb2fa923845e634cb2cb89234849",
-  "front/config.php": "f5e038bc0b9fa5f5961ff3c1fa11406bd49b079fb45d1f97ff051c84d75515f3",
+  "docs/VALIDATION.md": "58b093ad3ddb7024251ba91a85045b8fcd8644d3935478b10fd91f80872fdfa4",
+  "front/config.php": "1bc1dadf2b7f82275d6a4f6ba0c43e088ee58dea3049a04ef790a141d051f4f2",
   "hook.php": "21d071ccfb2be7fef04e3aa9414b0f81f054c83bafe1ef59f569ab40962e2784",
   "LICENSE": "81cbae84a29ce7e770bf2bc7b178e50bda0ce8de6067aba661b0bc7b05b562f8",
-  "README.md": "c117650e9fac35ae9ef7cd5fbed610f32177631c85d1b2732dc2b8bdaf05804a",
-  "setup.php": "b649a8f589f3cd976ea87138e6ac649f822706776e3032419672e913863f775c",
-  "src/Capture.php": "d1870a0a651a603c6c2999f97419fbc2a9b040216448f7df790e9c38bb77e8ef",
+  "README.md": "53b353f824d4422209d218d2dd63fecfa81ae9cd03b7114d3f729a8fd9dee81b",
+  "setup.php": "ac8102c8b684e30dba0f745f6299f0e362e46ce320889aba1575a9a18cfdd111",
+  "src/Capture.php": "85e473e554cb76a51e81e1049f8e71adccafe26148e6507d85c4e9d08d32a549",
   "src/Cleaner.php": "52b5436756eb1b44835c596d65f8fd3225f2cd0e11b608e4ad86f0b452af30cd",
-  "src/Settings.php": "ee8a00d2008e37304da37f7e4575e1d6e5009911dbd9f77e8e16847d109b5bd5",
+  "src/Settings.php": "ff9fbab8e573ea51643d0aa0d3d7813abb79f6b6f0fc94eaa73e4b29f9d591c3",
   "tests/capture.php": "70cbc47a228e3402712176bc57322fc270de2ca6a54df82ef0e7eb32f83456b7",
-  "tests/run.php": "79b6535105ca4d7e6b61440122ec3f89d4d63fd7f31adb67fbb8e6a1c4f7d75d"
+  "tests/run.php": "3ed1ace91cfac171fa26e9b83300319c47ba77fa5273cb43605394310757db74"
 }

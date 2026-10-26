@@ -64,8 +64,8 @@ final class Settings
             ['=-=-=-=', '=_=_=_='], self::lines($markers)
         )));
         $percent = filter_var($data['max_removed_percent'] ?? null, FILTER_VALIDATE_INT);
-        if ($percent === false || $percent < 1 || $percent > 95) {
-            throw new \InvalidArgumentException('La limite de suppression doit être comprise entre 1 et 95 %.');
+        if ($percent === false || $percent < 1 || $percent > 100) {
+            throw new \InvalidArgumentException('La limite de suppression doit être comprise entre 1 et 100 %.');
         }
         $out['max_removed_percent'] = (string) $percent;
         return $out;

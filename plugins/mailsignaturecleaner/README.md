@@ -1,4 +1,4 @@
-# Mail Signature Cleaner 1.1.3
+# Mail Signature Cleaner 1.1.4
 
 Plugin pour **GLPI 12.0.x / PHP ≥ 8.3**, interface en français. Dossier système : `mailsignaturecleaner`.
 
@@ -9,6 +9,14 @@ Le plugin retire les sous-arbres HTML correspondant à vos sélecteurs CSS des *
 Sélecteurs multiples : un par ligne, évalués sur le même document avant suppression. Les correspondances imbriquées sont dédupliquées. Le champ de suppression normale retire l'élément correspondant et ses descendants. Depuis la version 1.1.0, un champ séparé permet de **couper tout ce qui suit un repère**, même hors de son parent. Le moteur Symfony CssSelector est celui déjà fourni par GLPI ; **aucun `composer install` requis**.
 
 ## Coupure après un paragraphe (nouveau en 1.1.0)
+
+**Version 1.1.4 — règle validée sur une vraie capture du collecteur Outlook :** le paragraphe reçu peut avoir la classe `MsoNormal` et le style `margin-bottom:6.0pt;line-height:12.0pt`, différent du HTML copié depuis l'interface web Outlook. Dans le champ de coupure, utiliser pour cette variante :
+
+```css
+p[style*="margin-bottom:6.0pt"][style*="line-height:12.0pt"]
+```
+
+Cette règle a été vérifiée sur la capture fournie : une correspondance. Pour une réponse de quelques caractères suivie d'une très longue signature, régler la limite de suppression à **100 %** (désormais autorisée). Avec 95 %, le nettoyage est refusé par `ratio_guard`. Avec 100 %, le test conserve la réponse `fsdfs` et retire signature, mentions et ancien en-tête Outlook. Le refus d'un résultat vide et les protections des marqueurs/pièces jointes restent actifs. La limite par défaut reste 80 % et les paramètres existants ne changent pas automatiquement. Tester la règle précisément avant d'autoriser une suppression aussi importante.
 
 **Correctif 1.1.1 — en-têtes de réponse qui restent affichés :** en 1.1.0, une coupure peut retirer la signature tout en conservant un bloc Outlook `#divRplyFwdMsg` ou un `blockquote` protégé. Cela laisse apparaître un ancien en-tête « De / Envoyé / À / Objet ». Le plugin ne construit pas cet en-tête, mais sa conservation partielle est reproductible.
 
@@ -55,7 +63,7 @@ En cas d'erreur de capture dans le hook, la version 1.1.3 force également son �
 
 Le journal technique habituel ne contient pas les corps des mails. Pour diagnostiquer une signature ou un en-tête conservé :
 
-1. Installer la version 1.1.3, redémarrer le conteneur et ouvrir la configuration.
+1. Installer la version 1.1.4, redémarrer le conteneur et ouvrir la configuration.
 2. Cocher **Diagnostic temporaire : capturer le HTML avant/après**, enregistrer, puis envoyer une nouvelle réponse à un ticket de test et laisser le collecteur la traiter.
 3. Récupérer le nouveau fichier `capture-<date UTC>-<identifiant>.json` dans `GLPI_LOG_DIR/mailsignaturecleaner-debug/`, généralement `/var/glpi/files/_log/mailsignaturecleaner-debug/` sur l'image officielle.
 4. Décocher le diagnostic après la reproduction. Retirer les captures après analyse : elles contiennent les corps des messages et peuvent inclure des coordonnées et informations confidentielles.
@@ -111,7 +119,7 @@ Prise en charge : classes, identifiants, attributs (`=`, `^=`, `$=`, `*=`…), g
 - Les marqueurs GLPI `=-=-=-=` et `=_=_=_=` sont toujours protégés, même s'ils sont retirés de la liste affichée. Vous pouvez ajouter vos propres marqueurs. Les candidats contenant ces marqueurs, y compris dans un commentaire HTML, sont conservés ; un contrôle final vérifie leur nombre.
 - Les `blockquote` sont protégés, sauf pour une coupure avec suppression explicite de l'historique en 1.1.1. Les éléments reconnus comme pièces jointes GLPI (`document.send.php`, `data-glpi-document` et les placeholders `img` avec `id` sans `src` produits par le collecteur), leurs descendants et leurs ancêtres restent protégés. Une signature qui contient une image convertie en document GLPI peut donc être conservée par prudence : le plugin ne peut pas distinguer avec certitude un logo d'une image utile dans ce bloc.
 - La liste de protection configurable complète ces protections. Par défaut : `.gmail_quote`, `.moz-cite-prefix`, `#divRplyFwdMsg`. Il n'existe pas de détection exhaustive de tous les formats de citation.
-- Si le résultat n'a plus de texte ni de média/lien, le message d'origine est conservé. La limite de suppression (80 % par défaut, réglable de 1 à 95 %) s'applique au maximum de la proportion de texte retiré et de la proportion de HTML retiré. Ce garde-fou peut conserver une longue signature dans une réponse très courte.
+- Si le résultat n'a plus de texte ni de média/lien, le message d'origine est conservé. La limite de suppression (80 % par défaut, réglable de 1 à 100 % depuis la version 1.1.4) s'applique au maximum de la proportion de texte retiré et de la proportion de HTML retiré. Ce garde-fou peut conserver une longue signature dans une réponse très courte. La valeur 100 % lève uniquement ce seuil proportionnel ; les autres contrôles restent actifs.
 - Maximum : 1 Mio par message, 50 sélecteurs par liste, 512 octets par sélecteur et 100 éléments candidats. En cas de dépassement, erreur, marqueur altéré ou suppression excessive, **le contenu d'origine est conservé et le suivi reste créé**.
 - Le texte brut et le HTML entièrement échappé sont laissés intacts. Le plugin travaille sur le HTML après les transformations natives du collecteur : un élément déjà supprimé par GLPI ne peut pas être retrouvé. Un texte brut contenant littéralement des balises HTML peut être interprété comme du HTML ; éviter des règles génériques.
 - Le parseur DOM peut normaliser les guillemets, les entités, la casse des balises ou réparer un HTML mal formé lorsqu'une suppression est appliquée. Sans modification acceptée, le contenu reste identique octet pour octet. Le plugin ne constitue pas un assainisseur HTML ; GLPI conserve son propre traitement de sécurité.

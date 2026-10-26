@@ -53,7 +53,7 @@ final class Capture
                 $fields[$key] = substr($value, 0, self::MAX_FIELD_BYTES);
             }
             $record = [
-                'captured_at_utc' => gmdate('c'), 'plugin_version' => '1.1.3',
+                'captured_at_utc' => gmdate('c'), 'plugin_version' => '1.1.4',
                 'diagnostic_test' => !empty($input['_msc_diagnostic_test']),
                 'stage' => 'ITILFollowup pre_item_add; after native MailCollector processing',
                 'ticket_id' => (int) ($input['items_id'] ?? 0),

@@ -92,7 +92,7 @@ if (($_SERVER['REQUEST_METHOD'] ?? 'GET') === 'POST') {
 }
 Html::header('Mail Signature Cleaner', '', 'config', 'plugins');
 echo '<div class="container-xl"><h1>Mail Signature Cleaner</h1>';
-echo '<p>Version du formulaire : <strong>1.1.3</strong></p>';
+echo '<p>Version du formulaire : <strong>1.1.4</strong></p>';
 echo '<p>Nettoyage des nouveaux suivis de tickets issus des collecteurs mail. '
     . 'Les tickets initiaux et les suivis saisis dans GLPI sont exclus.</p>';
 if ($message !== '') {
@@ -142,8 +142,11 @@ echo '<p>Exemples : <code>div.signature &gt; table</code>, <code>[id^="Signature
     . 'L’option historique autorise aussi la suppression des citations et en-têtes de réponse après le repère ; '
     . 'les marqueurs GLPI et pièces jointes reconnus restent protégés.</p>';
 echo '<div class="mb-3"><label class="form-label" for="max_removed_percent">Part maximale supprimée (%)</label>'
-    . '<input class="form-control" type="number" min="1" max="95" name="max_removed_percent" '
+    . '<input class="form-control" type="number" min="1" max="100" name="max_removed_percent" '
     . 'id="max_removed_percent" value="' . msc_escape($settings['max_removed_percent']) . '"></div>';
+echo '<p>Une limite de 100 % autorise une signature très longue derrière une réponse courte. '
+    . 'Le refus d’un résultat vide et les autres protections restent actifs. '
+    . 'Utilisez cette valeur seulement avec une règle de coupure précisément testée.</p>';
 echo '<p>Les pièces jointes GLPI reconnues et les deux marqueurs GLPI sont toujours protégés. '
     . 'Les citations sont protégées sauf pour une coupure avec suppression explicite de l’historique. '
     . 'Ces garde-fous ne peuvent pas reconnaître tout contenu légitime : testez vos règles sur des messages réels.</p>';

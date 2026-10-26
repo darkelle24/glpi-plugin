@@ -75,11 +75,23 @@ check(run('<!DOCTYPE html><html><head><meta charset="UTF-8"></head><body>' . $bo
 check(run('<p>texte identique</p>', '.signature')['html'] === '<p>texte identique</p>', 'unmatched fragment unchanged');
 check(run($body . '<div class="signature"><img src="cid:logo"></div>')['changed'], 'standalone signature image removed');
 try {
-    Settings::validate(array_replace(Settings::defaults(), ['max_removed_percent' => '100']));
+    Settings::validate(array_replace(Settings::defaults(), ['max_removed_percent' => '101']));
     check(false, 'invalid percentage rejected');
 } catch (InvalidArgumentException $e) {
     check(true, 'invalid percentage rejected');
 }
+$longSignature = '<p>x</p><p id="cut">&nbsp;</p><div>' . str_repeat('s', 5000) . '</div>';
+$completeCut = run($longSignature, '', ['cut_after_selectors' => '#cut', 'max_removed_percent' => '100']);
+check($completeCut['changed'] && str_contains($completeCut['html'], '<p>x</p>')
+    && !str_contains($completeCut['html'], 'ssss'), '100 percent limit allows long signature behind short reply');
+check(run($sig, '.signature', ['max_removed_percent' => '100'])['status'] === 'empty_guard',
+    '100 percent limit still refuses an empty message');
+$outlookVariant = $body . '<div><p class="MsoNormal" style="margin-bottom:6.0pt;line-height:12.0pt"><span>&nbsp;</span></p>'
+    . $sig . '</div><div><b>De :</b> Support</div>';
+$outlookSelector = 'p[style*="margin-bottom:6.0pt"][style*="line-height:12.0pt"]';
+$outlookCleaned = run($outlookVariant, '', ['cut_after_selectors' => $outlookSelector, 'max_removed_percent' => '100']);
+check($outlookCleaned['changed'] && !str_contains($outlookCleaned['html'], 'Support')
+    && !str_contains($outlookCleaned['html'], 'Alice'), 'actual Outlook style variant cuts signature and trailing header');
 $cutOptions = ['cut_after_selectors' => '#cut'];
 $cutHtml = $body . '<div><p id="cut">&nbsp;</p><div>Signature</div></div><p>English disclaimer</p>Trailing text';
 $cut = run($cutHtml, '', $cutOptions);
