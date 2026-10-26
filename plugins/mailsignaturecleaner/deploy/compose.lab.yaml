@@ -1,0 +1,46 @@
+# Optional isolated fresh installation for acceptance tests. Never use these
+# volumes to replace the database or data volumes of an existing production app.
+name: glpi-msc-lab
+services:
+  glpi:
+    image: glpi/glpi:12.0.0
+    restart: unless-stopped
+    ports:
+      - "8088:80"
+    environment:
+      GLPI_DB_HOST: db
+      GLPI_DB_PORT: "3306"
+      GLPI_DB_NAME: glpi
+      GLPI_DB_USER: glpi
+      GLPI_DB_PASSWORD: ${GLPI_DB_PASSWORD:?Set a lab database password}
+      GLPI_SKIP_AUTOUPDATE: "true"
+      GLPI_CRONTAB_ENABLED: "1"
+    volumes:
+      - glpi_lab_data:/var/glpi
+      - type: bind
+        source: ${GLPI_PLUGINS_HOST:?Set the host plugins path}
+        target: /var/www/glpi/plugins
+        read_only: true
+        bind:
+          create_host_path: false
+    depends_on:
+      db:
+        condition: service_healthy
+  db:
+    image: mysql:8.4
+    restart: unless-stopped
+    environment:
+      MYSQL_RANDOM_ROOT_PASSWORD: "yes"
+      MYSQL_DATABASE: glpi
+      MYSQL_USER: glpi
+      MYSQL_PASSWORD: ${GLPI_DB_PASSWORD:?Set a lab database password}
+    volumes:
+      - glpi_lab_db:/var/lib/mysql
+    healthcheck:
+      test: ["CMD", "mysqladmin", "ping", "-h", "127.0.0.1"]
+      interval: 10s
+      timeout: 5s
+      retries: 30
+volumes:
+  glpi_lab_data:
+  glpi_lab_db:
