@@ -57,6 +57,13 @@ final class Cleaner
                 }
             }
             $targets = [];
+            $cutTargets = [];
+            $quoteNodes = [];
+            foreach (['blockquote', '.gmail_quote', '.moz-cite-prefix', '#divRplyFwdMsg'] as $selector) {
+                foreach ($xpath->query($converter->toXPath($selector)) as $node) {
+                    $quoteNodes[spl_object_id($node)] = true;
+                }
+            }
             foreach (Settings::lines($settings['cut_after_selectors']) as $selector) {
                 $anchors = $xpath->query($converter->toXPath($selector));
                 $result['matches']['Après : ' . $selector] = $anchors->length;
@@ -84,6 +91,7 @@ final class Cleaner
                 for ($branch = $anchor; !$branch->isSameNode($body); $branch = $branch->parentNode) {
                     for ($next = $branch->nextSibling; $next !== null; $next = $next->nextSibling) {
                         $targets[spl_object_id($next)] = $next;
+                        $cutTargets[spl_object_id($next)] = true;
                     }
                 }
             }
@@ -106,6 +114,13 @@ final class Cleaner
                     && in_array(strtolower($node->tagName), ['html', 'head', 'body'], true))
                     || !$this->contains($body, $node);
                 foreach ($protected as $protectedNode) {
+                    // A deliberate cut may also discard historical reply headers.
+                    // Normal selector removals and anchor checks keep quote protection.
+                    if ($settings['cut_remove_quotes'] === '1'
+                        && isset($cutTargets[spl_object_id($node)])
+                        && isset($quoteNodes[spl_object_id($protectedNode)])) {
+                        continue;
+                    }
                     if ($this->contains($node, $protectedNode) || $this->contains($protectedNode, $node)) {
                         $blocked = true;
                         break;

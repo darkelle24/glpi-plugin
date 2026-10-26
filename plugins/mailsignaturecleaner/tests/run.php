@@ -94,6 +94,25 @@ $cutProtected = run($body . '<p id="cut">&nbsp;</p><p>Signature</p><blockquote>C
 check(str_contains($cutProtected['html'], 'Citation') && str_contains($cutProtected['html'], '=_=_=_='), 'cut retains protected quotes and reply markers');
 check(run($cutHtml, '', ['cut_after_selectors' => 'body'])['status'] === 'invalid_cut', 'body cannot serve as cutoff anchor');
 check(run($body . '<p id="cut">Fin</p>', '', $cutOptions)['changed'] === false, 'anchor at end has no effect');
+$replyTail = $body . '<p id="cut">&nbsp;</p><div>Signature</div>'
+    . '<div id="divRplyFwdMsg"><hr><b>De :</b> Support<br><b>Objet :</b> Test</div>'
+    . '<blockquote>Ancien message</blockquote>';
+$retainedHeader = run($replyTail, '', $cutOptions);
+check(str_contains($retainedHeader['html'], 'divRplyFwdMsg') && !str_contains($retainedHeader['html'], 'Signature'),
+    'reproduce header left visible by protected cut');
+$strictOptions = ['cut_after_selectors' => '#cut', 'cut_remove_quotes' => '1'];
+$removedHeader = run($replyTail, '', $strictOptions);
+check($removedHeader['changed'] && !str_contains($removedHeader['html'], 'divRplyFwdMsg')
+    && !str_contains($removedHeader['html'], 'Ancien message'), 'explicit history removal clears header and quote');
+check(str_contains($removedHeader['html'], 'réponse utile'), 'history removal retains current reply');
+check(run($body . '<blockquote><p id="cut">repère</p></blockquote>' . $sig, '', $strictOptions)['status'] === 'protected',
+    'historical anchor still cannot trigger a cut');
+$strictMarker = run($replyTail . '<p>=_=_=_=</p>', '', $strictOptions);
+check(str_contains($strictMarker['html'], '=_=_=_='), 'history option still preserves GLPI marker');
+$strictAttachment = run($replyTail . '<p><a href="/front/document.send.php?docid=42">Attachment</a></p>', '', $strictOptions);
+check(str_contains($strictAttachment['html'], 'document.send.php'), 'history option still preserves attachment');
+$normalQuote = run($body . '<blockquote class="signature">Ancien message</blockquote>', '.signature', ['cut_remove_quotes' => '1']);
+check($normalQuote['changed'] === false, 'history option does not weaken normal selector protection');
 // Lightweight hook contract doubles. This is not a GLPI database integration test.
 class ITILFollowup { public array $input = []; }
 class Config {

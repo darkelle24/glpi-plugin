@@ -1,4 +1,4 @@
-# Mail Signature Cleaner 1.1.0
+# Mail Signature Cleaner 1.1.1
 
 Plugin pour **GLPI 12.0.x / PHP ≥ 8.3**, interface en français. Dossier système : `mailsignaturecleaner`.
 
@@ -9,6 +9,10 @@ Le plugin retire les sous-arbres HTML correspondant à vos sélecteurs CSS des *
 Sélecteurs multiples : un par ligne, évalués sur le même document avant suppression. Les correspondances imbriquées sont dédupliquées. Le champ de suppression normale retire l'élément correspondant et ses descendants. Depuis la version 1.1.0, un champ séparé permet de **couper tout ce qui suit un repère**, même hors de son parent. Le moteur Symfony CssSelector est celui déjà fourni par GLPI ; **aucun `composer install` requis**.
 
 ## Coupure après un paragraphe (nouveau en 1.1.0)
+
+**Correctif 1.1.1 — en-têtes de réponse qui restent affichés :** en 1.1.0, une coupure peut retirer la signature tout en conservant un bloc Outlook `#divRplyFwdMsg` ou un `blockquote` protégé. Cela laisse apparaître un ancien en-tête « De / Envoyé / À / Objet ». Le plugin ne construit pas cet en-tête, mais sa conservation partielle est reproductible.
+
+Pour retirer aussi l'historique situé après le repère, cocher **Coupure : supprimer aussi l’historique cité et les en-têtes Outlook après le repère**. L'option est désactivée par défaut et conserve les configurations existantes. Elle lève uniquement la protection des formats de citation reconnus (`blockquote`, `.gmail_quote`, `.moz-cite-prefix`, `#divRplyFwdMsg`) pour les éléments ciblés par la coupure. Les marqueurs GLPI, pièces jointes, autres protections et limites restent actifs. Elle ne retire pas un en-tête placé avant le repère ; la suppression normale continue à protéger les citations. Un repère trouvé à l'intérieur d'une citation reste refusé pour ne pas couper depuis une ancienne signature.
 
 Dans **Couper tout ce qui suit ce repère CSS**, placer le sélecteur du paragraphe qui précède la signature. Le repère et ses ancêtres sont conservés ; les éléments, commentaires et textes suivants dans le corps du document sont candidats à la suppression. Les protections de citations, pièces jointes et marqueurs restent prioritaires : des blocs protégés peuvent donc subsister après le repère. La limite de suppression reste appliquée.
 
@@ -55,7 +59,7 @@ Prise en charge : classes, identifiants, attributs (`=`, `^=`, `$=`, `*=`…), g
 ## Protections et limites
 
 - Les marqueurs GLPI `=-=-=-=` et `=_=_=_=` sont toujours protégés, même s'ils sont retirés de la liste affichée. Vous pouvez ajouter vos propres marqueurs. Les candidats contenant ces marqueurs, y compris dans un commentaire HTML, sont conservés ; un contrôle final vérifie leur nombre.
-- Les `blockquote`, les éléments reconnus comme pièces jointes GLPI (`document.send.php`, `data-glpi-document` et les placeholders `img` avec `id` sans `src` produits par le collecteur), leurs descendants et leurs ancêtres sont protégés. Une signature qui contient une image convertie en document GLPI peut donc être conservée par prudence : le plugin ne peut pas distinguer avec certitude un logo d'une image utile dans ce bloc.
+- Les `blockquote` sont protégés, sauf pour une coupure avec suppression explicite de l'historique en 1.1.1. Les éléments reconnus comme pièces jointes GLPI (`document.send.php`, `data-glpi-document` et les placeholders `img` avec `id` sans `src` produits par le collecteur), leurs descendants et leurs ancêtres restent protégés. Une signature qui contient une image convertie en document GLPI peut donc être conservée par prudence : le plugin ne peut pas distinguer avec certitude un logo d'une image utile dans ce bloc.
 - La liste de protection configurable complète ces protections. Par défaut : `.gmail_quote`, `.moz-cite-prefix`, `#divRplyFwdMsg`. Il n'existe pas de détection exhaustive de tous les formats de citation.
 - Si le résultat n'a plus de texte ni de média/lien, le message d'origine est conservé. La limite de suppression (80 % par défaut, réglable de 1 à 95 %) s'applique au maximum de la proportion de texte retiré et de la proportion de HTML retiré. Ce garde-fou peut conserver une longue signature dans une réponse très courte.
 - Maximum : 1 Mio par message, 50 sélecteurs par liste, 512 octets par sélecteur et 100 éléments candidats. En cas de dépassement, erreur, marqueur altéré ou suppression excessive, **le contenu d'origine est conservé et le suivi reste créé**.

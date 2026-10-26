@@ -78,6 +78,7 @@ echo '<form method="post" action="' . msc_escape($CFG_GLPI['root_doc']
     . '/plugins/mailsignaturecleaner/front/config.php') . '">';
 echo '<input type="hidden" name="msc_token" value="' . msc_escape($_SESSION['msc_form_token']) . '">';
 foreach (['enabled' => 'Activer le nettoyage', 'dry_run' => 'Simulation : conserver le contenu des suivis',
+    'cut_remove_quotes' => 'Coupure : supprimer aussi l’historique cité et les en-têtes Outlook après le repère',
     'log' => 'Journal technique sans contenu des messages'] as $key => $label) {
     echo '<div class="form-check mb-2"><input class="form-check-input" type="checkbox" name="'
         . $key . '" id="' . $key . '" value="1"'
@@ -98,11 +99,14 @@ echo '<p>Exemples : <code>div.signature &gt; table</code>, <code>[id^="Signature
     . 'Une ligne commençant par <code>//</code> est un commentaire. '
     . 'La suppression normale retire seulement le bloc ciblé. La coupure retire ce qui suit le repère '
     . 'dans tout le corps HTML, y compris hors de son parent ; le repère est conservé. '
-    . 'Si un repère correspond plusieurs fois, le nettoyage est annulé. Les protections restent actives.</p>';
+    . 'Si un repère correspond plusieurs fois, le nettoyage est annulé. '
+    . 'L’option historique autorise aussi la suppression des citations et en-têtes de réponse après le repère ; '
+    . 'les marqueurs GLPI et pièces jointes reconnus restent protégés.</p>';
 echo '<div class="mb-3"><label class="form-label" for="max_removed_percent">Part maximale supprimée (%)</label>'
     . '<input class="form-control" type="number" min="1" max="95" name="max_removed_percent" '
     . 'id="max_removed_percent" value="' . msc_escape($settings['max_removed_percent']) . '"></div>';
-echo '<p>Les citations blockquote, les pièces jointes GLPI reconnues et les deux marqueurs GLPI sont toujours protégés. '
+echo '<p>Les pièces jointes GLPI reconnues et les deux marqueurs GLPI sont toujours protégés. '
+    . 'Les citations sont protégées sauf pour une coupure avec suppression explicite de l’historique. '
     . 'Ces garde-fous ne peuvent pas reconnaître tout contenu légitime : testez vos règles sur des messages réels.</p>';
 echo '<button class="btn btn-primary mb-4" type="submit" name="action" value="save">Enregistrer</button>';
 echo '<h2>Test avant / après</h2><p>Collez le corps HTML reçu par GLPI (après traitement du collecteur). '
