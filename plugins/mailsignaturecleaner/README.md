@@ -1,4 +1,4 @@
-# Mail Signature Cleaner 1.1.1
+# Mail Signature Cleaner 1.1.2
 
 Plugin pour **GLPI 12.0.x / PHP ≥ 8.3**, interface en français. Dossier système : `mailsignaturecleaner`.
 
@@ -37,6 +37,43 @@ Le hook exige un `ITILFollowup`, `itemtype=Ticket`, `_mailgate>0` et `_auto_impo
 3. Ouvrir sa configuration depuis la liste des plugins. Accès direct, à adapter au préfixe de votre GLPI : `/plugins/mailsignaturecleaner/front/config.php`.
 4. Ajouter vos sélecteurs et tester plusieurs vrais corps HTML. **Tester sans enregistrer** applique les champs affichés au seul exemple. **Enregistrer** persiste la configuration.
 5. Au départ, le nettoyage est **désactivé** et **en simulation**. Cocher « Activer », conserver « Simulation » et activer le journal pour observer un cycle de collecte sans modifier les messages. Puis décocher « Simulation » et enregistrer pour réellement nettoyer les prochains suivis.
+
+## Capturer ce que reçoit le plugin (nouveau en 1.1.2)
+
+Le journal technique habituel ne contient pas les corps des mails. Pour diagnostiquer une signature ou un en-tête conservé :
+
+1. Installer la version 1.1.2, redémarrer le conteneur et ouvrir la configuration.
+2. Cocher **Diagnostic temporaire : capturer le HTML avant/après**, enregistrer, puis envoyer une nouvelle réponse à un ticket de test et laisser le collecteur la traiter.
+3. Récupérer le nouveau fichier `capture-<date UTC>-<identifiant>.json` dans `GLPI_LOG_DIR/mailsignaturecleaner-debug/`, généralement `/var/glpi/files/_log/mailsignaturecleaner-debug/` sur l'image officielle.
+4. Décocher le diagnostic après la reproduction. Retirer les captures après analyse : elles contiennent les corps des messages et peuvent inclure des coordonnées et informations confidentielles.
+
+Champs principaux du JSON :
+
+| Champ | Contenu |
+|---|---|
+| `before_html` | Corps transmis au hook, avant intervention du plugin |
+| `proposed_html` | Résultat calculé par le moteur de nettoyage |
+| `effective_html` | Corps laissé par ce hook pour la suite de GLPI ; identique à l'entrée en simulation ou si le nettoyage est désactivé |
+| `rules`, `matches` | Règles utilisées et nombre de correspondances |
+| `status`, `protected`, `removed` | Décision du moteur et compteurs |
+| `enabled`, `dry_run` | État du nettoyage et du mode simulation |
+| `ticket_id`, `collector_id`, `captured_at_utc` | Contexte du suivi et date UTC |
+| `body_limits` | Taille initiale de chaque corps et indication de troncature |
+
+La capture fonctionne même lorsque le nettoyage est désactivé : le moteur calcule alors une proposition sans l'appliquer. Elle s'applique toujours uniquement aux suivis de tickets issus du collecteur ; elle ne capture ni nouveaux tickets, ni suivis manuels, ni tests collés dans l'administration. Elle ne dépend pas du réglage « Journal technique » ni de l'activation des journaux GLPI.
+
+Les fichiers sont créés avec des permissions privées (dossier 0700, fichiers 0600 sous Linux). Le répertoire de logs doit rester hors de la racine web publique. Maximum **20 captures**, avec **256 Kio par version de corps** : au-delà, les captures s'arrêtent sans bloquer le collecteur. Les octets UTF-8 incomplets ou invalides sont remplacés dans le JSON. Les fichiers existants ne sont ni écrasés ni supprimés automatiquement. Pour recommencer après 20 fichiers, archiver ou retirer les anciennes captures ; l'option décochée ne supprime pas les fichiers. La désinstallation conserve également ces fichiers de diagnostic, comme les journaux GLPI.
+
+**Ce n'est pas le mail IMAP brut** : GLPI a déjà extrait le corps MIME, traité certains marqueurs et images avant le hook. Pour comparer avec le message original complet et ses en-têtes, télécharger aussi le mail `.eml` depuis la boîte du collecteur avant son archivage/suppression. `effective_html` représente la sortie du hook ; des traitements GLPI ou d'autres plugins peuvent encore intervenir avant l'enregistrement final.
+
+Exemples dans le terminal TrueNAS, en remplaçant le nom du conteneur :
+
+```sh
+docker exec NOM_CONTENEUR_GLPI ls -lt /var/glpi/files/_log/mailsignaturecleaner-debug
+docker cp NOM_CONTENEUR_GLPI:/var/glpi/files/_log/mailsignaturecleaner-debug ./msc-debug
+```
+
+Le second exemple copie le dossier dans `msc-debug` du répertoire courant de votre terminal. Ouvrir un fichier JSON comme du texte ; ne pas publier ces captures. Le mot de passe IMAP, les pièces jointes binaires et l'objet MIME ne sont pas sérialisés par la capture.
 
 ## Exemples de règles
 

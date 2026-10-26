@@ -161,4 +161,5 @@ check(Config::$values['enabled'] === '0' && Config::$values['dry_run'] === '1', 
 Config::$values['selectors'] = '#custom';
 plugin_mailsignaturecleaner_install();
 check(Config::$values['selectors'] === '#custom', 'reinstall preserves settings');
+require __DIR__ . '/capture.php';
 echo "PASS: $passed checks\n";

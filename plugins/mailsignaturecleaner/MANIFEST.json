@@ -1,5 +1,5 @@
 {
-  "bootstrap.php": "d2e3e43f3c7ba6dc55bbc8c3167b5b6451d0d990c0b5a146a7579460757b921e",
+  "bootstrap.php": "781593c7a14741a19031e17cace18a907a4846497dcb85f55ca2b60e4629607e",
   "deploy/.env.example": "70eea24b40be7a8dc2cf3737552c8bfedd212fcf49aa12e9f08bc2f7789cffad",
   "deploy/compose.lab.yaml": "da4c5432130b417cca11c63a043525eb582587fa7877082d565315aedd3184e9",
   "deploy/compose.override.yaml": "a4a73ffbd0546581df1c24cdb2e7a05a09179bdf504ec81a09b52ec3cfc67db6",
@@ -7,13 +7,15 @@
   "deploy/TRUENAS.md": "babf97d19b0e0d4ad9b2df7cc5266e6f7c32bbcd9e175ef6d82d437b9237d1c2",
   "docs/SOURCES.md": "a198519a7388d5238e13b182e17e983dce62f16f473e66ff666493ce3e1d234c",
   "docs/STATUS.md": "62bcd215128a8247f394799947f0b58af83e70eba807a3ad402598661a34e98f",
-  "docs/VALIDATION.md": "a1d957596be640dc69a50c4b8a0953e9a62c6048f0b42b7ea24b2ed3a54c0ea4",
-  "front/config.php": "073e45543b7b66a22c92a647ca0e56a315862a123b56beaf2d091a0e16032d06",
-  "hook.php": "e9cd997acb871487ea792f5694824454d40446577ec3fb69ba960ba486d489af",
+  "docs/VALIDATION.md": "cdeb6f007f42c43d1a1497ddf5c3a4782e5225af9eac069cbb32b78b5776ea02",
+  "front/config.php": "429755f4b567dad7a4dfebd284b3b1eda0afce76218d3260b8095f30ca3ec0e8",
+  "hook.php": "8828072ad9751370ae673ac56efe258b276acfb63faabfcc50b6da50531dcb75",
   "LICENSE": "81cbae84a29ce7e770bf2bc7b178e50bda0ce8de6067aba661b0bc7b05b562f8",
-  "README.md": "0138273c109f883595b136f2bd68f5f6e0e7a5dc10e78044c571b288994dfba2",
-  "setup.php": "8860594e7028ffbaf04bd5befa9beefaae6404522aa32b5f8998521bdf04f260",
+  "README.md": "507e6e924478da95dec91f592cf8027b569c0e33e2a767ed605f29f958d9ba58",
+  "setup.php": "3d407be91df8ba9c4b1b30def273dc7bf75d641bb7c570be76bbc27419be230f",
+  "src/Capture.php": "51bb9d1dbd7a02c9271af0176446de168b3d0838ab58439b264107ca89af9287",
   "src/Cleaner.php": "52b5436756eb1b44835c596d65f8fd3225f2cd0e11b608e4ad86f0b452af30cd",
-  "src/Settings.php": "0426a5ceaa5659e56f5cfadbcddd75171c96dd14451e5b85f1958c7aee700bcf",
-  "tests/run.php": "0d520b55d5dda1fdf73fc2990453a016caa3ad2f7aa7f9d325919ba478824c45"
+  "src/Settings.php": "ee8a00d2008e37304da37f7e4575e1d6e5009911dbd9f77e8e16847d109b5bd5",
+  "tests/capture.php": "70cbc47a228e3402712176bc57322fc270de2ca6a54df82ef0e7eb32f83456b7",
+  "tests/run.php": "79b6535105ca4d7e6b61440122ec3f89d4d63fd7f31adb67fbb8e6a1c4f7d75d"
 }

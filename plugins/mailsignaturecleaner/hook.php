@@ -1,5 +1,6 @@
 <?php
 use MailSignatureCleaner\Cleaner;
+use MailSignatureCleaner\Capture;
 use MailSignatureCleaner\Settings;
 
 function plugin_mailsignaturecleaner_install(): bool
@@ -35,19 +36,27 @@ function plugin_mailsignaturecleaner_pre_item_add($item): void
     }
     try {
         $settings = Settings::load();
-        if ($settings['enabled'] !== '1') {
+        if ($settings['enabled'] !== '1' && $settings['debug_capture'] !== '1') {
             return;
         }
         $result = (new Cleaner())->clean($input['content'], $settings);
-        if ($settings['dry_run'] !== '1' && $result['changed']) {
+        if ($settings['enabled'] === '1' && $settings['dry_run'] !== '1' && $result['changed']) {
             $item->input['content'] = $result['html'];
+        }
+        if ($settings['debug_capture'] === '1') {
+            try {
+                Capture::write($input, $settings, $result, $item->input['content']);
+            } catch (\Throwable $captureError) {
+                // Diagnostic I/O errors must never interrupt collection or cleaning.
+                Toolbox::logInFile('mailsignaturecleaner', "Diagnostic capture failed; check log directory permissions or disk space.\n");
+            }
         }
         if ($settings['log'] === '1') {
             // Do not log selectors, sender, subject, or message content.
             Toolbox::logInFile('mailsignaturecleaner', sprintf(
                 "collector=%d ticket=%d mode=%s status=%s removed=%d protected=%d\n",
                 (int) $input['_mailgate'], (int) ($input['items_id'] ?? 0),
-                $settings['dry_run'] === '1' ? 'simulation' : 'active',
+                $settings['enabled'] !== '1' ? 'disabled' : ($settings['dry_run'] === '1' ? 'simulation' : 'active'),
                 $result['status'], $result['removed'], $result['protected']
             ));
         }

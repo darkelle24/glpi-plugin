@@ -79,12 +79,16 @@ echo '<form method="post" action="' . msc_escape($CFG_GLPI['root_doc']
 echo '<input type="hidden" name="msc_token" value="' . msc_escape($_SESSION['msc_form_token']) . '">';
 foreach (['enabled' => 'Activer le nettoyage', 'dry_run' => 'Simulation : conserver le contenu des suivis',
     'cut_remove_quotes' => 'Coupure : supprimer aussi l’historique cité et les en-têtes Outlook après le repère',
+    'debug_capture' => 'Diagnostic temporaire : capturer le HTML avant/après (20 fichiers maximum)',
     'log' => 'Journal technique sans contenu des messages'] as $key => $label) {
     echo '<div class="form-check mb-2"><input class="form-check-input" type="checkbox" name="'
         . $key . '" id="' . $key . '" value="1"'
         . ($settings[$key] === '1' ? ' checked' : '') . '><label class="form-check-label" for="'
         . $key . '">' . $label . '</label></div>';
 }
+echo '<p>Le diagnostic écrit le contenu des mails dans <code>GLPI_LOG_DIR/mailsignaturecleaner-debug/</code>, '
+    . 'même si le nettoyage est désactivé ou en simulation. Maximum : 20 captures, 256 Kio par version du corps. '
+    . 'Il ne capture pas le mail MIME original. Désactivez-le après le test et retirez les fichiers après analyse.</p>';
 foreach (['selectors' => 'Sélecteurs CSS à supprimer — un par ligne',
     'cut_after_selectors' => 'Couper tout ce qui suit ce repère CSS — un par ligne (optionnel)',
     'protect_selectors' => 'Sélecteurs CSS à protéger — un par ligne',
