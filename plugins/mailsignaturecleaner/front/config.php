@@ -85,6 +85,7 @@ foreach (['enabled' => 'Activer le nettoyage', 'dry_run' => 'Simulation : conser
         . $key . '">' . $label . '</label></div>';
 }
 foreach (['selectors' => 'Sélecteurs CSS à supprimer — un par ligne',
+    'cut_after_selectors' => 'Couper tout ce qui suit ce repère CSS — un par ligne (optionnel)',
     'protect_selectors' => 'Sélecteurs CSS à protéger — un par ligne',
     'markers' => 'Marqueurs textuels à préserver — un par ligne'] as $key => $label) {
     echo '<div class="mb-3"><label class="form-label" for="' . $key . '">' . $label . '</label>'
@@ -95,7 +96,9 @@ echo '<p>Exemples : <code>div.signature &gt; table</code>, <code>[id^="Signature
     . '<code>div.signature:not(.conserver)</code>, <code>table.signature tr:nth-child(2)</code>. '
     . 'Les pseudo-éléments, <code>:hover</code> et <code>:has()</code> ne sont pas pris en charge. '
     . 'Une ligne commençant par <code>//</code> est un commentaire. '
-    . 'Chaque correspondance supprime uniquement son propre bloc HTML.</p>';
+    . 'La suppression normale retire seulement le bloc ciblé. La coupure retire ce qui suit le repère '
+    . 'dans tout le corps HTML, y compris hors de son parent ; le repère est conservé. '
+    . 'Si un repère correspond plusieurs fois, le nettoyage est annulé. Les protections restent actives.</p>';
 echo '<div class="mb-3"><label class="form-label" for="max_removed_percent">Part maximale supprimée (%)</label>'
     . '<input class="form-control" type="number" min="1" max="95" name="max_removed_percent" '
     . 'id="max_removed_percent" value="' . msc_escape($settings['max_removed_percent']) . '"></div>';
@@ -109,6 +112,8 @@ echo '<label class="form-label" for="sample">HTML à tester</label><textarea cla
 echo '<button class="btn btn-secondary my-3" type="submit" name="action" value="test">Tester sans enregistrer</button></form>';
 if ($result !== null) {
     $statuses = ['cleaned' => 'Nettoyage appliqué', 'no_match' => 'Aucune correspondance',
+        'ambiguous_cut' => 'Refus : plusieurs points de coupure pour une même règle',
+        'invalid_cut' => 'Refus : point de coupure hors du corps du message',
         'protected' => 'Correspondances protégées', 'empty_guard' => 'Refus : message vidé',
         'ratio_guard' => 'Refus : part supprimée trop importante', 'marker_guard' => 'Refus : marqueur altéré',
         'too_many_matches' => 'Refus : plus de 100 éléments ciblés', 'too_large' => 'Message trop volumineux',

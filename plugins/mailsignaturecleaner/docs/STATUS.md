@@ -4,6 +4,8 @@
 |---|---|
 | `cleaned` | Suppression autorisée ; résultat appliqué sauf en simulation |
 | `no_match` | Aucun élément ne correspond |
+| `ambiguous_cut` | Un même sélecteur de coupure trouve plusieurs repères ; original conservé |
+| `invalid_cut` | Le repère de coupure n'est pas un élément à l'intérieur du corps HTML |
 | `protected` | Tous les candidats sont protégés |
 | `plain_text` | Aucune balise HTML détectée |
 | `empty_guard` | Le résultat aurait été vide |

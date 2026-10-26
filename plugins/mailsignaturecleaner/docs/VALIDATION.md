@@ -4,12 +4,14 @@
 
 - Audit des sources GLPI 12.0.0, sans modification du cœur.
 - Syntaxe de tous les fichiers PHP.
-- 43 assertions du lanceur `tests/run.php` : sélecteurs CSS, attributs et pseudo-classes ; UTF-8 ; absence de correspondance ; idempotence ; HTML échappé ; document complet et HTML incomplet ; suppression imbriquée ; citations ; marqueurs GLPI/personnalisés/commentaires ; pièces jointes et placeholders d'images du collecteur ; résultat vide ; limite proportionnelle ; limites de taille/nombre ; déclaration d'entité refusée ; configuration invalide ; contrat du hook avec doubles ; exclusion des saisies manuelles ; simulation ; configuration initiale et désinstallation.
+- 51 assertions du lanceur `tests/run.php` : sélecteurs CSS, attributs et pseudo-classes ; UTF-8 ; absence de correspondance ; idempotence ; HTML échappé ; document complet et HTML incomplet ; suppression imbriquée ; citations ; marqueurs GLPI/personnalisés/commentaires ; pièces jointes et placeholders d'images du collecteur ; résultat vide ; limite proportionnelle ; limites de taille/nombre ; déclaration d'entité refusée ; configuration invalide ; contrat du hook avec doubles ; exclusion des saisies manuelles ; simulation ; configuration initiale et désinstallation ; coupure après un repère entre plusieurs parents, textes suivants, conservation du repère, ambiguïté, repère absent/invalide et protections.
 - Moteur CssSelector exact du verrou GLPI 12.0.0 : Symfony 7.4.18, commit `fecf40067fc8d8880ea87b8ac227600b9aadd1d0`.
 - Lanceur exécuté avec succès sur PHP **8.3.36** et **8.5.12** (Windows x64) ; contrôle de syntaxe sur PHP 8.3.36. Aucun runtime ou dépendance de test n'est embarqué dans le plugin.
 - Script de déploiement : syntaxe POSIX vérifiée. La copie et la sauvegarde ont été exercées dans un dossier temporaire avec le shell Git Windows ; cette distribution ne fournit pas `chmod`, donc la vérification complète des permissions Linux reste à effectuer sur l'hôte cible. Le script final vérifie la présence des utilitaires avant de copier.
 
 Les doubles `Config`, `ITILFollowup` et `Toolbox` ne démarrent pas GLPI et ne remplacent pas un test d'intégration. Aucune instance GLPI/MySQL/IMAP ni hôte TrueNAS n'était connecté à cet environnement. L'installation en base, le rendu réel de l'administration et un cycle IMAP complet restent à valider sur l'instance de recette. Aucun résultat de déploiement sur votre serveur n'est revendiqué.
+
+Version 1.1.0 : test supplémentaire sur le HTML Outlook fourni par l'utilisateur. Avec le sélecteur exact du paragraphe et une limite de 95 %, une seule ancre est reconnue ; signature, logos et mentions françaises/anglaises sont retirés. Le texte utile reste présent. Le mail original, qui contient des coordonnées personnelles, n'est pas embarqué comme fixture dans l'archive.
 
 ## Recette avant production
 

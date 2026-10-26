@@ -57,6 +57,36 @@ final class Cleaner
                 }
             }
             $targets = [];
+            foreach (Settings::lines($settings['cut_after_selectors']) as $selector) {
+                $anchors = $xpath->query($converter->toXPath($selector));
+                $result['matches']['Après : ' . $selector] = $anchors->length;
+                if ($anchors->length > 1) {
+                    $result['status'] = 'ambiguous_cut';
+                    return $result;
+                }
+                if ($anchors->length === 0) {
+                    continue;
+                }
+                $anchor = $anchors->item(0);
+                if (!$this->contains($body, $anchor) || $anchor->isSameNode($body)) {
+                    $result['status'] = 'invalid_cut';
+                    return $result;
+                }
+                foreach ($protected as $protectedNode) {
+                    if ($this->contains($protectedNode, $anchor)) {
+                        $result['status'] = 'protected';
+                        $result['protected']++;
+                        return $result;
+                    }
+                }
+                // Follow document order across parent boundaries; retain the anchor
+                // and its ancestors so the retained HTML stays structurally valid.
+                for ($branch = $anchor; !$branch->isSameNode($body); $branch = $branch->parentNode) {
+                    for ($next = $branch->nextSibling; $next !== null; $next = $next->nextSibling) {
+                        $targets[spl_object_id($next)] = $next;
+                    }
+                }
+            }
             foreach (Settings::lines($settings['selectors']) as $selector) {
                 $nodes = $xpath->query($converter->toXPath($selector));
                 $result['matches'][$selector] = $nodes->length;
@@ -72,7 +102,8 @@ final class Cleaner
             }
             $allowed = [];
             foreach ($targets as $node) {
-                $blocked = in_array(strtolower($node->tagName), ['html', 'head', 'body'], true)
+                $blocked = ($node instanceof DOMElement
+                    && in_array(strtolower($node->tagName), ['html', 'head', 'body'], true))
                     || !$this->contains($body, $node);
                 foreach ($protected as $protectedNode) {
                     if ($this->contains($node, $protectedNode) || $this->contains($protectedNode, $node)) {
@@ -93,8 +124,8 @@ final class Cleaner
                     $allowed[] = $node;
                 }
             }
-            // Remove each subtree once; never remove siblings, following text, or everything below a marker.
-            $top = array_filter($allowed, function (DOMElement $node) use ($allowed): bool {
+            // Deduplicate normal targets and explicit cut-after tails.
+            $top = array_filter($allowed, function (DOMNode $node) use ($allowed): bool {
                 foreach ($allowed as $other) {
                     if ($other !== $node && $this->contains($other, $node)) {
                         return false;

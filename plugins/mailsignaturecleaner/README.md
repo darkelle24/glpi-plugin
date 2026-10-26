@@ -1,4 +1,4 @@
-# Mail Signature Cleaner 1.0.0
+# Mail Signature Cleaner 1.1.0
 
 Plugin pour **GLPI 12.0.x / PHP ≥ 8.3**, interface en français. Dossier système : `mailsignaturecleaner`.
 
@@ -6,7 +6,23 @@ Plugin pour **GLPI 12.0.x / PHP ≥ 8.3**, interface en français. Dossier syst�
 
 Le plugin retire les sous-arbres HTML correspondant à vos sélecteurs CSS des **nouveaux suivis de tickets créés par les collecteurs mail**. Il ne modifie pas le ticket initial, les suivis existants, les suivis manuels, les tâches, les solutions ni les messages SMTP sortants. Aucun changement du cœur de GLPI. Les données de configuration sont conservées dans `glpi_configs`, contexte `plugin:mailsignaturecleaner` ; aucune table supplémentaire.
 
-Sélecteurs multiples : un par ligne, évalués sur le même document avant suppression. Les correspondances imbriquées sont dédupliquées. On supprime seulement l'élément correspondant et ses descendants, jamais « tout ce qui suit ». Le moteur Symfony CssSelector est celui déjà fourni par GLPI ; **aucun `composer install` requis**.
+Sélecteurs multiples : un par ligne, évalués sur le même document avant suppression. Les correspondances imbriquées sont dédupliquées. Le champ de suppression normale retire l'élément correspondant et ses descendants. Depuis la version 1.1.0, un champ séparé permet de **couper tout ce qui suit un repère**, même hors de son parent. Le moteur Symfony CssSelector est celui déjà fourni par GLPI ; **aucun `composer install` requis**.
+
+## Coupure après un paragraphe (nouveau en 1.1.0)
+
+Dans **Couper tout ce qui suit ce repère CSS**, placer le sélecteur du paragraphe qui précède la signature. Le repère et ses ancêtres sont conservés ; les éléments, commentaires et textes suivants dans le corps du document sont candidats à la suppression. Les protections de citations, pièces jointes et marqueurs restent prioritaires : des blocs protégés peuvent donc subsister après le repère. La limite de suppression reste appliquée.
+
+Si un même sélecteur trouve plusieurs repères, le nettoyage entier est annulé (`ambiguous_cut`). Un repère dans une citation protégée est refusé. Un repère absent ne produit aucune coupure. Le champ reste vide par défaut et les configurations existantes sont conservées à la mise à jour.
+
+Pour le mail d'exemple transmis (paragraphes Outlook), utiliser :
+
+```css
+p[style="font-size:11pt;font-family:Calibri,sans-serif;margin:0 0 6pt 0;line-height:12.0pt;"]
+```
+
+Régler la limite à **95 % pour cet exemple** : sa signature représente la majorité du contenu. Le test sur l'extrait fourni conserve le texte de la réponse et retire la signature ainsi que les mentions françaises et anglaises. Ne pas mettre cette règle dans le champ de suppression normale, qui ne retirerait que le paragraphe vide. Retirer les deux anciennes règles structurelles proposées pour cet exemple si vous utilisez désormais la coupure seule.
+
+Ce style n'est pas un identifiant universel de signature : une autre mise en forme peut le modifier ou le réutiliser ailleurs. Tester les variantes réellement reçues par GLPI. Un identifiant dédié dans le modèle de signature reste préférable à long terme.
 
 Le hook exige un `ITILFollowup`, `itemtype=Ticket`, `_mailgate>0` et `_auto_import`. Le simple type de demande « e-mail » n'est pas une preuve suffisante. Le collecteur GLPI utilise le même chemin pour IMAP et POP : le plugin s'applique aux deux, sans distinction du protocole. Les imports tiers qui reproduiraient volontairement ces champs pourraient aussi déclencher le nettoyage. Ce filtre est un ciblage fonctionnel, pas une frontière de sécurité pour une API.
 

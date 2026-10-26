@@ -17,7 +17,7 @@ function plugin_init_mailsignaturecleaner(): void
 function plugin_version_mailsignaturecleaner(): array
 {
     return [
-        'name' => 'Mail Signature Cleaner', 'version' => '1.0.0',
+        'name' => 'Mail Signature Cleaner', 'version' => '1.1.0',
         'author' => 'Mail Signature Cleaner contributors', 'license' => 'GPLv3+',
         'requirements' => ['glpi' => ['min' => '12.0.0', 'max' => '12.1.0'],
             'php' => ['min' => '8.3']],

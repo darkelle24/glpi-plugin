@@ -9,6 +9,7 @@ final class Settings
     {
         return ['enabled' => '0', 'dry_run' => '1', 'log' => '0',
             'selectors' => ".gmail_signature\n#Signature\ndiv.moz-signature",
+            'cut_after_selectors' => '',
             'protect_selectors' => "blockquote\n.gmail_quote\n.moz-cite-prefix\n#divRplyFwdMsg",
             'markers' => "=-=-=-=\n=_=_=_=", 'max_removed_percent' => '80'];
     }
@@ -31,7 +32,8 @@ final class Settings
             $out[$key] = ($data[$key] ?? '') === '1' ? '1' : '0';
         }
         $converter = new \Symfony\Component\CssSelector\CssSelectorConverter();
-        foreach (['selectors', 'protect_selectors'] as $key) {
+        $data += ['cut_after_selectors' => ''];
+        foreach (['selectors', 'cut_after_selectors', 'protect_selectors'] as $key) {
             if (!is_string($data[$key] ?? null) || strlen($data[$key]) > 26000) {
                 throw new \InvalidArgumentException('Liste de sélecteurs absente ou trop longue.');
             }

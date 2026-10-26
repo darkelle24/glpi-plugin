@@ -80,6 +80,20 @@ try {
 } catch (InvalidArgumentException $e) {
     check(true, 'invalid percentage rejected');
 }
+$cutOptions = ['cut_after_selectors' => '#cut'];
+$cutHtml = $body . '<div><p id="cut">&nbsp;</p><div>Signature</div></div><p>English disclaimer</p>Trailing text';
+$cut = run($cutHtml, '', $cutOptions);
+check($cut['changed'] && !str_contains($cut['html'], 'Signature')
+    && !str_contains($cut['html'], 'English disclaimer') && !str_contains($cut['html'], 'Trailing text'),
+    'cut removes following content across ancestors and trailing text');
+check(str_contains($cut['html'], 'id="cut"') && str_contains($cut['html'], 'réponse utile'), 'cut keeps anchor and earlier reply');
+check(run($cutHtml, '', ['cut_after_selectors' => '#missing'])['html'] === $cutHtml, 'missing cut anchor leaves exact original');
+check(run($body . '<p id="cut">a</p><p id="cut">b</p>', '', $cutOptions)['status'] === 'ambiguous_cut', 'duplicate cut anchors rejected');
+check(run($body . '<blockquote><p id="cut">repère</p></blockquote>' . $sig, '', $cutOptions)['status'] === 'protected', 'cut inside citation rejected');
+$cutProtected = run($body . '<p id="cut">&nbsp;</p><p>Signature</p><blockquote>Citation</blockquote><p>=_=_=_=</p>', '', $cutOptions);
+check(str_contains($cutProtected['html'], 'Citation') && str_contains($cutProtected['html'], '=_=_=_='), 'cut retains protected quotes and reply markers');
+check(run($cutHtml, '', ['cut_after_selectors' => 'body'])['status'] === 'invalid_cut', 'body cannot serve as cutoff anchor');
+check(run($body . '<p id="cut">Fin</p>', '', $cutOptions)['changed'] === false, 'anchor at end has no effect');
 // Lightweight hook contract doubles. This is not a GLPI database integration test.
 class ITILFollowup { public array $input = []; }
 class Config {

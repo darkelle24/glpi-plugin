@@ -6,14 +6,14 @@
   "deploy/install.sh": "a2247908f58a733069d98ed4877f6f2ba0a75d22c8f4a892b1561faf48f4449c",
   "deploy/TRUENAS.md": "babf97d19b0e0d4ad9b2df7cc5266e6f7c32bbcd9e175ef6d82d437b9237d1c2",
   "docs/SOURCES.md": "a198519a7388d5238e13b182e17e983dce62f16f473e66ff666493ce3e1d234c",
-  "docs/STATUS.md": "2a9eaa91b2c767fd34824aae0fec60a21ae6ee23dcffea9346be74a8a03af9a0",
-  "docs/VALIDATION.md": "b876992f301dd38f0a5fea2e945134938e474ef66d3712cd94e994f83c74d18d",
-  "front/config.php": "3a7b3ffb053281dba602be9b81301b5eec10d6122481fc3041b0ec27a0bee4b7",
+  "docs/STATUS.md": "62bcd215128a8247f394799947f0b58af83e70eba807a3ad402598661a34e98f",
+  "docs/VALIDATION.md": "4b350875686d0b015b1ff1bde287c43ffedde728db08071f83497c90c1036efb",
+  "front/config.php": "cfce4d944cae83ac231542a1f63c00c80a9370a2acc5518e57a903aacc60e91b",
   "hook.php": "e9cd997acb871487ea792f5694824454d40446577ec3fb69ba960ba486d489af",
   "LICENSE": "81cbae84a29ce7e770bf2bc7b178e50bda0ce8de6067aba661b0bc7b05b562f8",
-  "README.md": "6a804f59f9345bbc7b4f73c87f003511cf757e1c43f73612af6dfdce1833959a",
-  "setup.php": "7f7f335be2db2b52b4e72d4faf1f0dc50d61a7cf4b21419f1853d122a970b72e",
-  "src/Cleaner.php": "90f2520a88c5d966513cd85a5d14ee2b30619905b8ec2f7da3e41edb836e7805",
-  "src/Settings.php": "1b9309b3c4354f7197c6616875955944bbf2783fc42d4f3d7da9f8f839df8699",
-  "tests/run.php": "99c9a04c76fed5ec8becf818c8517eefa2fe8f046a5f1fe0c0c3704ebd8cf918"
+  "README.md": "1cbb6fde30466e8aa197554a875b90b8fe74e04657d4870c1476fea04cada58b",
+  "setup.php": "a09da65b57fab2fecf63167600c602ef489720b24eda70184d5c71d368047cf0",
+  "src/Cleaner.php": "be2146690a1ec01185d8c5df0002265a9efcea962d2a4cbefe9bca3ceb4d463a",
+  "src/Settings.php": "8bf1a55663fdd971dd09c21575cc2f79c1a77ea0a471bb4bd0d9f71ee9783b66",
+  "tests/run.php": "a7977167644a205444f4ab6ecf4608987c0f6a1a64c4e50f3501b26599e6227a"
 }
