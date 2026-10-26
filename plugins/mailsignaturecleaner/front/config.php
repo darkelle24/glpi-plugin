@@ -1,6 +1,7 @@
 <?php
 use Glpi\Kernel\Kernel;
 use MailSignatureCleaner\Cleaner;
+use MailSignatureCleaner\Capture;
 use MailSignatureCleaner\Settings;
 
 // GLPI 12 boots and authenticates plugin PHP routes through public/index.php.
@@ -36,6 +37,30 @@ if (($_SERVER['REQUEST_METHOD'] ?? 'GET') === 'POST') {
         exit('Session expirée ou requête invalide. Rechargez la page.');
     }
     try {
+        if (($_POST['action'] ?? '') === 'diagnostic') {
+            // A synthetic write exercises the real writer without needing an IMAP
+            // followup, enabling capture, or changing the saved configuration.
+            $diagnosticSettings = $settings;
+            $diagnosticSettings['debug_capture'] = '1';
+            $diagnosticInput = ['content' => '<p>Test technique de capture. Aucun mail utilisateur.</p>',
+                '_msc_diagnostic_test' => true];
+            $diagnosticResult = ['html' => $diagnosticInput['content'], 'status' => 'diagnostic_test',
+                'removed' => 0, 'protected' => 0, 'matches' => [], 'warnings' => []];
+            try {
+                $name = Capture::write($diagnosticInput, $diagnosticSettings,
+                    $diagnosticResult, $diagnosticInput['content']);
+                if ($name === null) {
+                    $error = 'Écriture arrêtée : quota de 20 captures atteint ou liste des fichiers illisible. '
+                        . 'Archiver les captures existantes puis recommencer.';
+                } else {
+                    $message = 'Écriture réussie : ' . Capture::directory() . '/' . $name
+                        . '. Ce test confirme l’écriture depuis le processus web, pas le passage d’un mail dans le hook.';
+                }
+            } catch (Throwable $e) {
+                $error = 'Échec du test d’écriture : ' . $e->getMessage()
+                    . ' Vérifier les droits et l’espace disque pour le compte PHP du conteneur.';
+            }
+        } else {
         $candidate = Settings::validate($_POST);
         $settings = $candidate;
         if (($_POST['action'] ?? '') === 'save') {
@@ -50,6 +75,7 @@ if (($_SERVER['REQUEST_METHOD'] ?? 'GET') === 'POST') {
             $message = 'Test réalisé avec les règles affichées, sans enregistrer la configuration.';
         } else {
             throw new InvalidArgumentException('Action inconnue.');
+        }
         }
     } catch (InvalidArgumentException $e) {
         $error = $e->getMessage();
@@ -66,6 +92,7 @@ if (($_SERVER['REQUEST_METHOD'] ?? 'GET') === 'POST') {
 }
 Html::header('Mail Signature Cleaner', '', 'config', 'plugins');
 echo '<div class="container-xl"><h1>Mail Signature Cleaner</h1>';
+echo '<p>Version du formulaire : <strong>1.1.3</strong></p>';
 echo '<p>Nettoyage des nouveaux suivis de tickets issus des collecteurs mail. '
     . 'Les tickets initiaux et les suivis saisis dans GLPI sont exclus.</p>';
 if ($message !== '') {
@@ -77,6 +104,14 @@ if ($error !== '') {
 echo '<form method="post" action="' . msc_escape($CFG_GLPI['root_doc']
     . '/plugins/mailsignaturecleaner/front/config.php') . '">';
 echo '<input type="hidden" name="msc_token" value="' . msc_escape($_SESSION['msc_form_token']) . '">';
+echo '<div class="alert alert-info"><strong>Diagnostic des captures</strong><br>'
+    . 'Chemin utilisé par GLPI : <code>' . msc_escape(Capture::directory()) . '</code><br>'
+    . 'Capture actuellement enregistrée : <strong>'
+    . (Settings::load()['debug_capture'] === '1' ? 'activée' : 'désactivée') . '</strong>. '
+    . 'Les captures concernent une nouvelle réponse collectée ajoutée en suivi à un ticket existant. '
+    . 'Un nouveau ticket, un suivi manuel ou un test avant/après dans cette page ne déclenche pas la capture mail.<br>'
+    . '<button class="btn btn-secondary mt-2" type="submit" name="action" value="diagnostic">'
+    . 'Tester l’écriture d’une capture fictive</button></div>';
 foreach (['enabled' => 'Activer le nettoyage', 'dry_run' => 'Simulation : conserver le contenu des suivis',
     'cut_remove_quotes' => 'Coupure : supprimer aussi l’historique cité et les en-têtes Outlook après le repère',
     'debug_capture' => 'Diagnostic temporaire : capturer le HTML avant/après (20 fichiers maximum)',

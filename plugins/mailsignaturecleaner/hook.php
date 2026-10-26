@@ -48,7 +48,9 @@ function plugin_mailsignaturecleaner_pre_item_add($item): void
                 Capture::write($input, $settings, $result, $item->input['content']);
             } catch (\Throwable $captureError) {
                 // Diagnostic I/O errors must never interrupt collection or cleaning.
-                Toolbox::logInFile('mailsignaturecleaner', "Diagnostic capture failed; check log directory permissions or disk space.\n");
+                $captureFailure = 'Diagnostic capture failed: ' . $captureError->getMessage();
+                error_log('[Mail Signature Cleaner] ' . $captureFailure);
+                Toolbox::logInFile('mailsignaturecleaner', $captureFailure . "\n", true, false);
             }
         }
         if ($settings['log'] === '1') {

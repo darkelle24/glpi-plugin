@@ -1,4 +1,4 @@
-# Mail Signature Cleaner 1.1.2
+# Mail Signature Cleaner 1.1.3
 
 Plugin pour **GLPI 12.0.x / PHP ≥ 8.3**, interface en français. Dossier système : `mailsignaturecleaner`.
 
@@ -40,9 +40,22 @@ Le hook exige un `ITILFollowup`, `itemtype=Ticket`, `_mailgate>0` et `_auto_impo
 
 ## Capturer ce que reçoit le plugin (nouveau en 1.1.2)
 
+### Aucun fichier de capture : diagnostic 1.1.3
+
+La configuration affiche désormais la **version du formulaire**, le **chemin exact calculé à partir de `GLPI_LOG_DIR`** et l'état **enregistré** de l'option de capture. Le chemin peut différer de l'exemple Docker ci-dessous : utiliser celui affiché sur votre instance.
+
+Cliquer **Tester l’écriture d’une capture fictive**. Le bouton envoie un POST protégé avec un texte de test, sans enregistrer les champs du formulaire ni activer le diagnostic pour les vrais mails. Il utilise le même moteur d'écriture et le même quota que les captures réelles. Le fichier est identifié par `diagnostic_test=true`.
+
+- **Écriture réussie** : le chemin du fichier s'affiche. Le processus PHP web peut écrire. Si aucun mail n'est ensuite capturé, vérifier que l'option enregistrée est activée, que le plugin est activé, que les workers ont chargé la nouvelle version et que le message a créé un nouveau suivi sur un ticket existant via le collecteur. Un nouveau ticket ou un suivi manuel ne passe pas par ce hook. Le compte du worker de collecte peut différer de celui du web.
+- **Échec d'écriture** : l'erreur apparaît sur la page ; vérifier le compte PHP, les permissions sur le chemin affiché et l'espace disque. Ne pas supposer que le compte est `33:33` ; le relever dans le conteneur.
+- **Quota atteint / dossier illisible** : archiver les fichiers du dossier ou corriger sa lecture, puis recommencer. Le test fictif utilise lui aussi un emplacement parmi les 20 captures.
+- **Formulaire encore en 1.1.2** : vérifier le montage, le remplacement des fichiers dans le conteneur réel et redémarrer le conteneur pour vider OPcache.
+
+En cas d'erreur de capture dans le hook, la version 1.1.3 force également son écriture dans le journal technique et transmet une erreur sans contenu mail au journal PHP du conteneur. L'échec d'écriture du diagnostic ne doit pas interrompre la collecte.
+
 Le journal technique habituel ne contient pas les corps des mails. Pour diagnostiquer une signature ou un en-tête conservé :
 
-1. Installer la version 1.1.2, redémarrer le conteneur et ouvrir la configuration.
+1. Installer la version 1.1.3, redémarrer le conteneur et ouvrir la configuration.
 2. Cocher **Diagnostic temporaire : capturer le HTML avant/après**, enregistrer, puis envoyer une nouvelle réponse à un ticket de test et laisser le collecteur la traiter.
 3. Récupérer le nouveau fichier `capture-<date UTC>-<identifiant>.json` dans `GLPI_LOG_DIR/mailsignaturecleaner-debug/`, généralement `/var/glpi/files/_log/mailsignaturecleaner-debug/` sur l'image officielle.
 4. Décocher le diagnostic après la reproduction. Retirer les captures après analyse : elles contiennent les corps des messages et peuvent inclure des coordonnées et informations confidentielles.

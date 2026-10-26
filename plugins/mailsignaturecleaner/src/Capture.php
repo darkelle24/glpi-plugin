@@ -7,15 +7,20 @@ final class Capture
     public const MAX_FILES = 20;
     public const MAX_FIELD_BYTES = 262144;
 
+    public static function directory(): string
+    {
+        if (!defined('GLPI_LOG_DIR')) {
+            throw new \RuntimeException('GLPI_LOG_DIR non défini.');
+        }
+        return GLPI_LOG_DIR . '/mailsignaturecleaner-debug';
+    }
+
     public static function write(array $input, array $settings, array $result, string $effective): ?string
     {
         if (($settings['debug_capture'] ?? '0') !== '1') {
             return null;
         }
-        if (!defined('GLPI_LOG_DIR')) {
-            throw new \RuntimeException('GLPI log directory unavailable.');
-        }
-        $directory = GLPI_LOG_DIR . '/mailsignaturecleaner-debug';
+        $directory = self::directory();
         if (is_link($directory)) {
             throw new \RuntimeException('Refusing linked capture directory.');
         }
@@ -48,7 +53,8 @@ final class Capture
                 $fields[$key] = substr($value, 0, self::MAX_FIELD_BYTES);
             }
             $record = [
-                'captured_at_utc' => gmdate('c'), 'plugin_version' => '1.1.2',
+                'captured_at_utc' => gmdate('c'), 'plugin_version' => '1.1.3',
+                'diagnostic_test' => !empty($input['_msc_diagnostic_test']),
                 'stage' => 'ITILFollowup pre_item_add; after native MailCollector processing',
                 'ticket_id' => (int) ($input['items_id'] ?? 0),
                 'collector_id' => (int) ($input['_mailgate'] ?? 0),

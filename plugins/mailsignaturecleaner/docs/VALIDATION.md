@@ -17,6 +17,8 @@ Version 1.1.1 : reproduction synthétique d'une signature suivie d'un `#divRplyF
 
 Version 1.1.2 : tests d'écriture réelle dans un répertoire temporaire isolé, puis suppression des seuls fichiers de test. Validation du quota de 20 captures et de la continuité du nettoyage une fois le quota atteint. Les permissions Unix doivent toujours être confirmées sur le conteneur Linux cible.
 
+Version 1.1.3 : test du POST de diagnostic avec doubles des composants GLPI. Le formulaire crée une capture fictive identifiée, affiche le chemin réel et la version, et ne persiste pas les champs du formulaire. Les 68 assertions précédentes continuent à passer. Ce test ne confirme pas les permissions ni le déclenchement du hook sur l'instance utilisateur ; le bouton sert à recueillir cette preuve localement.
+
 ## Recette avant production
 
 1. Sur une instance GLPI 12.0.x de recette, installer et activer le plugin. Ouvrir sa configuration avec un profil autorisé, puis vérifier qu'un profil sans droit de configuration ne peut pas y accéder directement.
