@@ -1,0 +1,73 @@
+# À FUSIONNER dans votre pile existante. Ce fragment seul ne définit pas GLPI/DB.
+# V2 : le worker remplace l'ancien bridge. Aucun socket Docker n'est nécessaire.
+services:
+  glpi:
+    environment:
+      PLUGINSYNC_ALLOWED_PROFILES: ""
+    volumes:
+      - type: bind
+        source: /mnt/Apps/GLPI/git-sync/secrets/token
+        target: /run/secrets/pluginsync_token
+        read_only: true
+        bind:
+          create_host_path: false
+    networks:
+      # Conserver les réseaux actuels de GLPI/DB/proxy, adapter default au besoin.
+      default: {}
+      pluginsync_private: {}
+
+  pluginsync-worker:
+    image: local/git-sync:2.0.0
+    pull_policy: never
+    user: "568:568"
+    restart: unless-stopped
+    environment:
+      # Préfixe NAS affiché dans le formulaire. Doit correspondre au montage /repos.
+      PLUGINSYNC_HOST_REPO_ROOT: /mnt/Apps/GLPI/repos
+    read_only: true
+    cap_drop: [ALL]
+    security_opt:
+      - no-new-privileges:true
+    pids_limit: 128
+    mem_limit: 512m
+    cpus: 1.0
+    tmpfs:
+      - /tmp:rw,noexec,nosuid,nodev,size=64m,mode=1777
+    volumes:
+      - type: bind
+        source: /mnt/Apps/GLPI/git-sync/secrets/token
+        target: /run/secrets/pluginsync_token
+        read_only: true
+        bind: {create_host_path: false}
+      - type: bind
+        source: /mnt/Apps/GLPI/git-sync/data
+        target: /data
+        bind: {create_host_path: false}
+      - type: bind
+        source: /mnt/Apps/GLPI/repos
+        target: /repos
+        bind: {create_host_path: false}
+      # Compatibilité avec deploy.sh fourni dans le dépôt utilisateur.
+      # Le script doit écrire via PLUGINS_PATH et MARKETPLACE_PATH.
+      - type: bind
+        source: /mnt/Apps/GLPI/plugins
+        target: /glpi/plugins
+        bind: {create_host_path: false}
+      - type: bind
+        source: /mnt/Apps/GLPI/marketplace
+        target: /glpi/marketplace
+        bind: {create_host_path: false}
+    networks:
+      pluginsync_private:
+        aliases: [pluginsync-worker]
+      # Git doit pouvoir joindre les serveurs HTTPS lorsque GLPI est fermé.
+      pluginsync_outbound: {}
+    logging:
+      driver: json-file
+      options: {max-size: "2m", max-file: "2"}
+    # Aucun port publié, aucun privilège, aucun montage du socket Docker.
+
+networks:
+  pluginsync_private:
+    internal: true
+  pluginsync_outbound: {}

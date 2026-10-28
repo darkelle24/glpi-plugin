@@ -1,0 +1,8 @@
+{
+  "description": "Test dependencies only; never install these in the GLPI plugin directory",
+  "require": {
+    "twig/twig": "^3.27",
+    "symfony/routing": "^7.4",
+    "symfony/http-foundation": "^7.4"
+  }
+}

@@ -1,0 +1,108 @@
+{% extends 'layout/page_without_tabs.html.twig' %}
+{% macro icon(name) %}
+<svg viewBox="0 0 24 24" aria-hidden="true" focusable="false">
+{% if name == 'branch' %}<circle cx="6" cy="5" r="2.5"/><circle cx="18" cy="6" r="2.5"/><circle cx="6" cy="19" r="2.5"/><path d="M6 7.5v9M18 8.5v2c0 4-12 0-12 6"/>
+{% elseif name == 'git' %}<path d="m12 2 10 10-10 10L2 12Z"/><circle cx="9" cy="8" r="1.5"/><circle cx="15" cy="13" r="1.5"/><path d="M9 9.5V17M10 9l4 3"/>
+{% elseif name == 'plus' %}<path d="M12 5v14M5 12h14"/>
+{% elseif name == 'refresh' %}<path d="M20 8a8 8 0 0 0-14-2L3 9m0-5v5h5M4 16a8 8 0 0 0 14 2l3-3m0 5v-5h-5"/>
+{% elseif name == 'check' %}<path d="m5 12 4 4L19 6"/>
+{% elseif name == 'alert' %}<circle cx="12" cy="12" r="9"/><path d="M12 7v6m0 4h.01"/>
+{% elseif name == 'folder' %}<path d="M3 6h6l2 3h10v10H3Z"/>
+{% elseif name == 'folders' %}<path d="M6 4h6l2 3h7v10M3 8h6l2 3h8v10H3Z"/>
+{% elseif name == 'terminal' %}<rect x="3" y="5" width="18" height="14" rx="2"/><path d="m7 9 3 3-3 3m6 0h4"/>
+{% elseif name == 'edit' %}<path d="m16 3 5 5-12 12-6 1 1-6Zm-2 2 5 5"/>
+{% elseif name == 'file' %}<path d="M5 3h9l5 5v13H5Zm9 0v6h5M8 13h8m-8 4h6"/>
+{% endif %}
+</svg>
+{% endmacro %}
+{% block content_title %}{% endblock %}
+{% block content_body %}
+{% autoescape 'html' %}
+<link rel="stylesheet" href="{{ path('@pluginsync:assets', {file: 'app.css'}) }}?v=2.0.0">
+<div class="gs" data-git-sync data-status-url="{{ path('@pluginsync:statuses', {page: data.page|default(1)}) }}">
+  <header class="gs-hero">
+    <div class="gs-brand-icon" aria-hidden="true">{{ _self.icon('branch') }}</div>
+    <div class="gs-heading"><span class="gs-eyebrow">VOS DÉPÔTS, AU MÊME ENDROIT</span><h1>Git Sync<span class="gs-admin">Administration</span></h1>
+      <p>Clonez, synchronisez et déployez vos dépôts en un clic.</p></div>
+    <a class="gs-top-link" href="{{ path('@pluginsync:admin', {page: data.page|default(1)}) }}#gs-editor">{{ _self.icon('plus') }} Ajouter un dépôt</a>
+  </header>
+  {% if notice %}<div role="alert" class="gs-alert {{ notice.ok ? 'gs-alert-ok' : 'gs-alert-error' }}">{{ notice.text }}</div>{% endif %}
+  {% if error %}<div role="alert" class="gs-alert gs-alert-error">{{ error }}</div>{% endif %}
+  {% if data %}
+  <section class="gs-metrics" aria-label="Résumé">
+    <div><span class="gs-metric-icon gs-purple">{{ _self.icon('folders') }}</span><span><strong>{{ data.total }}</strong><small>Dépôts configurés</small></span></div>
+    <div><span class="gs-metric-icon gs-blue">{{ _self.icon('refresh') }}</span><span><strong data-count-running>{{ data.counts.running|default(0) + data.counts.queued|default(0) }}</strong><small>En cours</small></span></div>
+    <div><span class="gs-metric-icon gs-green">{{ _self.icon('check') }}</span><span><strong data-count-success>{{ data.counts.success|default(0) }}</strong><small>Derniers essais réussis</small></span></div>
+    <div><span class="gs-metric-icon gs-red">{{ _self.icon('alert') }}</span><span><strong data-count-error>{{ data.counts.error|default(0) }}</strong><small>À vérifier</small></span></div>
+  </section>
+  <div class="gs-layout">
+    <main class="gs-main">
+      <div class="gs-section-title"><h2>Mes dépôts <span>{{ data.total }}</span></h2><span data-live-indicator class="gs-live">● Suivi en direct</span></div>
+      <div class="gs-repositories">
+      {% for job in data.jobs %}
+        {% set busy = job.status in ['queued', 'running'] %}
+        {% set states = {'idle': 'Jamais lancé', 'queued': 'En cours', 'running': 'En cours', 'success': 'Succès', 'error': 'Erreur'} %}
+        <article class="gs-repo" data-job-id="{{ job.id }}">
+          <div class="gs-repo-top"><div class="gs-repo-symbol">{{ _self.icon('git') }}</div><span data-job-status class="gs-status gs-status-{{ job.status }}">{{ states[job.status]|default('Inconnu') }}</span></div>
+          <h3>{{ job.name }}</h3><p class="gs-url" title="{{ job.url }}">{{ job.url }}</p>
+          <div class="gs-repo-properties">
+            <div>{{ _self.icon('branch') }}<span>{{ job.branch }}</span></div>
+            <div title="{{ job.host_path }}">{{ _self.icon('folder') }}<code>{{ job.host_path }}</code></div>
+            <div>{{ _self.icon('terminal') }}<span>{{ job.script ?: 'Sans script après synchronisation' }}</span></div>
+          </div>
+          <p data-job-message class="gs-job-message {{ job.status == 'error' ? 'gs-error-text' : '' }}">{{ job.message }}</p>
+          <div class="gs-attempt"><span>Dernier essai</span><time data-job-time datetime="{{ job.last_attempt|default('') }}">{{ job.last_attempt ? job.last_attempt|date('d/m/Y H:i') : 'Aucun pour le moment' }}</time></div>
+          <form method="post" action="{{ path('@pluginsync:job') }}" class="gs-auto-form">
+            <input type="hidden" name="sync_csrf" value="{{ sync_csrf }}"><input type="hidden" name="action" value="toggle"><input type="hidden" name="id" value="{{ job.id }}"><input type="hidden" name="page" value="{{ data.page }}">
+            <label class="gs-switch"><input data-auto-submit data-busy-control type="checkbox" name="auto_pull" value="1" {% if job.auto_pull %}checked{% endif %} {% if busy %}disabled{% endif %}><span class="gs-switch-track" aria-hidden="true"></span><span>Pull automatique<small>Toutes les {{ job.interval_minutes }} min</small></span></label>
+            <button class="gs-auto-save" type="submit" data-busy-control {% if busy %}disabled{% endif %}>Appliquer</button>
+          </form>
+          <p class="gs-next">Prochain passage : <time data-job-next datetime="{{ job.next_run_at|default('') }}">{{ job.next_run_at ? job.next_run_at|date('d/m/Y H:i') : 'désactivé' }}</time></p>
+          <div class="gs-actions">
+            <form method="post" action="{{ path('@pluginsync:job') }}"><input type="hidden" name="sync_csrf" value="{{ sync_csrf }}"><input type="hidden" name="action" value="run"><input type="hidden" name="id" value="{{ job.id }}"><input type="hidden" name="page" value="{{ data.page }}">
+              <button data-busy-control class="gs-button gs-button-primary" type="submit" {% if busy %}disabled{% endif %}>{{ _self.icon('refresh') }} Synchroniser</button></form>
+            <a data-edit-link class="gs-button gs-button-light {{ busy ? 'gs-disabled' : '' }}" href="{{ path('@pluginsync:admin', {page: data.page, edit: job.id}) }}#gs-editor" title="Modifier {{ job.name }}">{{ _self.icon('edit') }}<span class="gs-sr-only">Modifier</span></a>
+            <a class="gs-button gs-button-light" href="{{ path('@pluginsync:admin', {page: data.page, logs: job.id}) }}#gs-log" title="Dernier journal">{{ _self.icon('file') }}<span class="gs-sr-only">Journal</span></a>
+          </div>
+        </article>
+      {% else %}
+        <div class="gs-empty">{{ _self.icon('branch') }}<h3>Votre premier dépôt vous attend</h3><p>Ajoutez son adresse et son dossier de clonage. Vous pourrez ensuite le synchroniser ici, ou activer les mises à jour automatiques.</p><a href="#gs-editor" class="gs-button gs-button-primary">Configurer un dépôt</a></div>
+      {% endfor %}
+      </div>
+      {% if data.pages > 1 %}<nav class="gs-pagination" aria-label="Pages des dépôts">
+        {% if data.page > 1 %}<a class="gs-button gs-button-light" href="{{ path('@pluginsync:admin', {page: data.page - 1}) }}">← Précédent</a>{% endif %}
+        <span>Page {{ data.page }} / {{ data.pages }}</span>
+        {% if data.page < data.pages %}<a class="gs-button gs-button-light" href="{{ path('@pluginsync:admin', {page: data.page + 1}) }}">Suivant →</a>{% endif %}
+      </nav>{% endif %}
+      {% if log %}<section class="gs-panel gs-log" id="gs-log"><h2>Dernier journal</h2><p>Derniers 64 Kio de cette tentative.</p><pre>{{ log.logs ?: 'Aucun journal disponible.' }}</pre></section>{% endif %}
+      <p class="gs-footnote">Une exécution à la fois pour protéger vos déploiements. Les heures sont affichées dans le fuseau de votre navigateur.</p>
+    </main>
+    <aside class="gs-panel gs-editor" id="gs-editor">
+      <div class="gs-editor-heading"><span class="gs-editor-icon">{{ _self.icon(edit ? 'edit' : 'plus') }}</span><div><h2>{{ edit ? 'Modifier le dépôt' : 'Nouveau dépôt' }}</h2><p>{{ edit ? 'Ajustez sa configuration.' : 'Connectez un projet à Git Sync.' }}</p></div></div>
+      <form method="post" action="{{ path('@pluginsync:job') }}" class="gs-editor-form">
+        <input type="hidden" name="sync_csrf" value="{{ sync_csrf }}"><input type="hidden" name="action" value="save"><input type="hidden" name="id" value="{{ edit.id|default(0) }}"><input type="hidden" name="page" value="{{ data.page }}">
+        <label>Nom du dépôt<input name="name" required maxlength="80" placeholder="Mes plugins GLPI" value="{{ edit.name|default('') }}"></label>
+        <label>Adresse du dépôt<input name="url" type="url" required maxlength="2048" placeholder="https://github.com/organisation/depot.git" value="{{ edit.url|default('') }}"><small>URL HTTPS, sans mot de passe ni jeton.</small></label>
+        <label>Branche<input name="branch" required maxlength="100" placeholder="main" value="{{ edit.branch|default('main') }}"></label>
+        <label>Chemin de clonage<input name="path" required maxlength="400" placeholder="{{ data.host_root }}/mon-depot" value="{{ edit.host_path|default(edit.path|default('')) }}"><small>Dans {{ data.host_root }}/ uniquement. Le dossier sera créé s'il n'existe pas.</small></label>
+        <label>Script après synchronisation <span class="gs-optional">facultatif</span><input name="script" maxlength="200" placeholder="deploy.sh" value="{{ edit.script|default('') }}"><small>Fichier shell dans le dépôt, exécuté avec /bin/sh.</small></label>
+        <div class="gs-auto-editor"><label class="gs-switch"><input type="checkbox" name="auto_pull" value="1" {% if edit.auto_pull|default(false) %}checked{% endif %}><span class="gs-switch-track" aria-hidden="true"></span><span>Pull automatique<small>Fonctionne même quand cette page est fermée.</small></span></label>
+          <label class="gs-interval">Fréquence <span><input name="interval_minutes" type="number" min="5" max="10080" value="{{ edit.interval_minutes|default(15) }}" required> minutes</span></label>
+        </div>
+        <p class="gs-form-note">Au clic, le script est exécuté même si le dépôt est déjà à jour. En automatique, il est exécuté après un changement ou après un précédent échec de déploiement.</p>
+        <button class="gs-button gs-button-primary gs-full" type="submit">{{ edit ? 'Enregistrer les modifications' : 'Ajouter le dépôt' }}</button>
+        {% if edit %}<a class="gs-cancel" href="{{ path('@pluginsync:admin', {page: data.page}) }}">Annuler la modification</a>{% endif %}
+      </form>
+      {% if edit.id|default(0) > 0 %}
+      <details class="gs-remove"><summary>Retirer ce dépôt</summary><form method="post" action="{{ path('@pluginsync:job') }}">
+        <input type="hidden" name="sync_csrf" value="{{ sync_csrf }}"><input type="hidden" name="action" value="delete"><input type="hidden" name="id" value="{{ edit.id }}"><input type="hidden" name="page" value="{{ data.page }}">
+        <label><input type="checkbox" required name="confirm_delete" value="1"> Retirer la configuration. Les fichiers clonés seront conservés.</label><button class="gs-button gs-button-danger" type="submit">Confirmer le retrait</button>
+      </form></details>
+      {% endif %}
+    </aside>
+  </div>
+  {% endif %}
+</div>
+<script src="{{ path('@pluginsync:assets', {file: 'app.js'}) }}?v=2.0.0" defer></script>
+{% endautoescape %}
+{% endblock %}

@@ -1,0 +1,255 @@
+<!doctype html><html lang="fr"><head><meta charset="utf-8"><meta name="viewport" content="width=device-width"><title>Git Sync — Aperçu</title><style>body{margin:0;padding:32px;background:#f6f7fb;font-family:Inter,Segoe UI,Arial,sans-serif}button,input{font-family:inherit}</style></head><body><p style="text-align:center;color:#8a80a6;font-size:12px">APERÇU VISUEL — données fictives, actions désactivées</p><style>.gs{--gs-purple:#6653d9;--gs-ink:#25243c;--gs-muted:#79798d;--gs-line:#e8e8f0;color:var(--gs-ink);max-width:1540px;margin:0 auto;padding:4px 0 24px;font-size:14px}
+.gs *{box-sizing:border-box}.gs-hero{display:flex;align-items:center;gap:20px;padding:30px 32px;border:1px solid #e3def8;border-radius:18px;background:linear-gradient(110deg,#f1edff 0%,#faf9ff 70%,#fff 100%);margin-bottom:24px}
+.gs svg{width:1em;height:1em;fill:none;stroke:currentColor;stroke-width:1.7;stroke-linecap:round;stroke-linejoin:round;flex-shrink:0}.gs-repo-properties svg{width:15px;height:15px;color:#a499b6}.gs-button svg{width:15px;height:15px}.gs-empty>svg{width:38px;height:38px}
+.gs-brand-icon{display:grid;place-items:center;width:66px;height:66px;flex-shrink:0;background:#6954d8;color:#fff;border-radius:18px;font-size:36px;box-shadow:0 8px 22px #6653d928}.gs-eyebrow{color:#8a80a6;font-size:10px;letter-spacing:1.8px;font-weight:750}.gs h1{font-size:32px;letter-spacing:-1px;line-height:1.3;margin:4px 0 6px;display:flex;align-items:center;gap:15px;font-weight:750}.gs-admin{font-size:10px;background:#e7e1fc;color:#6d59b1;border:1px solid #dcd3f8;padding:4px 8px;border-radius:6px;letter-spacing:.3px;font-weight:650}.gs-heading p{margin:0;color:#77738b;font-size:13px}.gs-top-link{margin-left:auto;color:#6350c9;text-decoration:none;font-weight:650;display:flex;gap:6px;align-items:center;white-space:nowrap}
+.gs-metrics{display:grid;grid-template-columns:repeat(4,minmax(0,1fr));gap:16px;margin-bottom:30px}.gs-metrics>div{background:var(--tblr-bg-surface,#fff);border:1px solid var(--gs-line);border-radius:13px;padding:18px;display:flex;align-items:center;gap:14px}.gs-metric-icon{display:grid;place-items:center;height:43px;width:43px;border-radius:11px;font-size:23px;flex-shrink:0}.gs-purple{background:#eeeafd;color:#7861d8}.gs-blue{background:#e9f2ff;color:#5283cf}.gs-green{background:#e5f5ed;color:#4c9976}.gs-red{background:#fff0ee;color:#d57b72}.gs-metrics strong{display:block;font-size:24px;line-height:1.1;font-weight:750}.gs-metrics small{display:block;color:var(--gs-muted);font-size:11px;margin-top:5px}
+.gs-layout{display:grid;grid-template-columns:minmax(0,1fr) 350px;gap:26px;align-items:start}.gs-section-title{display:flex;align-items:center;justify-content:space-between;margin-bottom:17px}.gs h2{font-size:16px;font-weight:700;margin:0}.gs-section-title h2 span{font-size:11px;color:#8d879f;background:#ece9f4;padding:3px 7px;border-radius:5px;margin-left:7px}.gs-live{color:#67917e;font-size:10px}.gs-live.is-offline{color:#b68341}.gs-repositories{display:grid;grid-template-columns:repeat(2,minmax(0,1fr));gap:18px}
+.gs-repo{padding:22px;border:1px solid var(--gs-line);border-radius:14px;background:var(--tblr-bg-surface,#fff);transition:border-color .2s,box-shadow .2s;min-width:0}.gs-repo:hover{border-color:#d3cbed;box-shadow:0 5px 22px #39304e06}.gs-repo-top{display:flex;justify-content:space-between;align-items:center;margin-bottom:17px}.gs-repo-symbol{width:38px;height:38px;display:grid;place-items:center;background:#f4f2fa;color:#8a7cb5;font-size:24px;border-radius:10px}.gs-status{display:inline-flex;align-items:center;gap:6px;font-size:10px;padding:5px 9px;border-radius:6px;font-weight:700;white-space:nowrap}.gs-status:before{content:"";height:6px;width:6px;background:currentColor;border-radius:50%}.gs-status-idle{background:#f1f1f5;color:#9292a3}.gs-status-success{background:#e8f6ef;color:#378865}.gs-status-error{background:#fceceb;color:#c66360}.gs-status-running,.gs-status-queued{background:#eeebff;color:#7661d4}.gs-status-running:before,.gs-status-queued:before{animation:gs-pulse 1.4s ease-in-out infinite}@keyframes gs-pulse{50%{opacity:.3}}
+.gs-repo h3{font-size:17px;font-weight:750;letter-spacing:-.3px;margin:0 0 5px;overflow-wrap:anywhere}.gs-url{font-size:10px;color:#9290a2;white-space:nowrap;text-overflow:ellipsis;overflow:hidden;margin:0 0 20px}.gs-repo-properties{display:grid;gap:10px;color:#858293;font-size:11px}.gs-repo-properties>div{display:flex;align-items:center;gap:8px;min-width:0}.gs-repo-properties i{font-size:15px;color:#b3aabd}.gs-repo-properties code{font-size:10px;background:transparent;color:#8c8799;white-space:nowrap;overflow:hidden;text-overflow:ellipsis;padding:0}.gs-job-message{font-size:11px;color:#9993a6;min-height:17px;line-height:1.6;margin:15px 0 12px;overflow-wrap:anywhere}.gs-error-text{color:#c46b69}.gs-attempt{display:flex;align-items:center;justify-content:space-between;gap:8px;padding:12px 0;border-top:1px solid #f0edf5;border-bottom:1px solid #f0edf5;font-size:10px}.gs-attempt>span{color:#aaa5b7}.gs-attempt time{color:#777186;font-weight:550}
+.gs-auto-form{display:flex;align-items:center;justify-content:space-between;padding-top:15px;gap:6px}.gs-switch{display:flex;align-items:center;gap:9px;cursor:pointer;margin:0;font-size:11px;font-weight:600}.gs-switch input{position:absolute;opacity:0;width:1px;height:1px}.gs-switch-track{position:relative;display:block;flex-shrink:0;width:29px;height:17px;border-radius:15px;background:#d8d5e4;transition:background .15s}.gs-switch-track:after{content:"";position:absolute;width:11px;height:11px;top:3px;left:3px;background:#fff;border-radius:50%;box-shadow:0 1px 2px #0001;transition:transform .15s}.gs-switch input:checked+.gs-switch-track{background:#7c69d9}.gs-switch input:checked+.gs-switch-track:after{transform:translateX(12px)}.gs-switch input:focus-visible+.gs-switch-track{outline:3px solid #b8aafa;outline-offset:3px}.gs-switch input:disabled+.gs-switch-track{opacity:.5}.gs-switch small{display:block;color:#aaa4b7;font-size:9px;font-weight:400;margin-top:3px}.gs-auto-save{background:none;border:0;color:#9788c6;font-size:10px;padding:4px;cursor:pointer}.gs.has-js .gs-auto-save{display:none}.gs-next{font-size:9px;color:#a59db1;margin:8px 0 16px;min-height:13px}
+.gs-actions{display:flex;gap:7px}.gs-actions>form{flex:1}.gs-actions>form .gs-button{width:100%}.gs-button{display:inline-flex;align-items:center;justify-content:center;gap:6px;padding:10px 12px;border-radius:8px;border:1px solid transparent;font-size:11px;font-weight:650;cursor:pointer;text-decoration:none;line-height:1.3;transition:filter .15s}.gs-button-primary{background:#7760d5;color:#fff!important;box-shadow:0 3px 6px #6d55c418}.gs-button-primary:hover{filter:brightness(.95)}.gs-button-light{background:#f8f7fc;border-color:#ece8f4;color:#9a8db9}.gs-button:disabled,.gs-disabled{opacity:.45;pointer-events:none}.gs-button i{font-size:15px}.gs-button-danger{background:#fceeed;color:#c56d69;border-color:#f4d6d2;margin-top:12px}
+.gs-panel{background:var(--tblr-bg-surface,#fff);border:1px solid var(--gs-line);border-radius:15px;padding:23px}.gs-editor{scroll-margin-top:24px}.gs-editor-heading{display:flex;gap:11px;align-items:center;padding-bottom:20px;border-bottom:1px solid #eeeaf6;margin-bottom:20px}.gs-editor-icon{display:grid;place-items:center;width:34px;height:34px;background:#f2eefb;border-radius:10px;color:#8e7dbe;font-size:21px}.gs-editor-heading h2{font-size:15px}.gs-editor-heading p{color:#aaa2b8;font-size:10px;margin:3px 0 0}.gs-editor-form>label{display:block;font-weight:600;font-size:11px;margin-bottom:16px;color:#777084}.gs-editor-form input:not([type=hidden]):not([type=checkbox]){display:block;width:100%;font-family:inherit;font-size:11px;color:#6f677e;background:var(--tblr-bg-surface,#fff);border:1px solid #e6e1ef;border-radius:7px;padding:10px 11px;margin-top:7px;outline:none}.gs-editor-form input:focus{border-color:#ab98e4!important;box-shadow:0 0 0 3px #9d84df12}.gs-editor-form input::placeholder{color:#bcb5c9}.gs-editor-form label>small{display:block;font-size:9px;font-weight:400;color:#afa7bd;line-height:1.5;margin-top:6px}.gs-optional{font-weight:400;color:#bab2c6;font-size:9px;margin-left:3px}
+.gs-auto-editor{background:#f9f7fd;border:1px solid #eee8f7;border-radius:10px;padding:14px;margin:7px 0 14px}.gs-auto-editor .gs-switch{font-size:11px}.gs-auto-editor .gs-switch small{font-size:9px;margin-top:5px}.gs-interval{display:flex;justify-content:space-between;align-items:center;font-size:10px;color:#9a8eae;margin-top:14px}.gs-interval span{display:flex;align-items:center;gap:5px}.gs-editor-form .gs-interval input{width:58px!important;padding:6px!important;margin:0!important}.gs-form-note{font-size:9px;line-height:1.7;color:#b0a7be;margin:0 0 18px}.gs-full{width:100%;padding:12px}.gs-cancel{display:block;text-align:center;font-size:10px;color:#9487b0;margin-top:13px}.gs-remove{margin-top:25px;padding-top:15px;border-top:1px solid #eee9f4;font-size:10px;color:#b49da7}.gs-remove summary{cursor:pointer}.gs-remove label{margin-top:12px;display:block;line-height:1.7}
+.gs-pagination{display:flex;align-items:center;justify-content:center;gap:16px;margin:25px 0;font-size:11px;color:#998da9}.gs-footnote{color:#b2a9bf;font-size:10px;margin:24px 0}.gs-empty{grid-column:1/-1;text-align:center;padding:60px 35px;background:#faf9ff;border:1px dashed #dcd4ed;border-radius:15px;color:#a096b5}.gs-empty>i{font-size:38px;color:#baa9de}.gs-empty h3{margin:18px 0 10px;font-size:17px;color:#7d6d9a}.gs-empty p{font-size:12px;line-height:1.8;max-width:430px;margin:0 auto 20px}.gs-alert{padding:14px 18px;border-radius:10px;margin-bottom:20px;font-size:12px;overflow-wrap:anywhere}.gs-alert-ok{background:#eef8f1;color:#5a9270;border:1px solid #d8eddf}.gs-alert-error{background:#fff2f1;color:#b87573;border:1px solid #f1d8d5}.gs-log{margin-top:25px;scroll-margin-top:20px}.gs-log p{color:#a89bb7;font-size:10px;margin:8px 0 15px}.gs-log pre{font-size:11px;white-space:pre-wrap;overflow-wrap:anywhere;max-height:350px;overflow:auto;background:#f7f5fc;padding:16px;border-radius:8px}.gs-sr-only{position:absolute;width:1px;height:1px;overflow:hidden;clip:rect(0,0,0,0)}
+@media(min-width:1600px){.gs-layout{grid-template-columns:minmax(0,1fr) 370px}.gs-repo{padding:25px}}@media(max-width:1200px){.gs-repositories{grid-template-columns:1fr}.gs-layout{grid-template-columns:minmax(0,1fr) 330px}}@media(max-width:850px){.gs-layout{grid-template-columns:1fr}.gs-metrics{grid-template-columns:repeat(2,minmax(0,1fr))}.gs-hero{padding:22px;flex-wrap:wrap}.gs-top-link{margin-left:86px}.gs-repositories{grid-template-columns:repeat(2,minmax(0,1fr))}}@media(max-width:580px){.gs-hero{gap:13px}.gs-brand-icon{width:47px;height:47px;font-size:27px;border-radius:13px}.gs h1{font-size:25px;gap:8px}.gs-admin{font-size:8px}.gs-eyebrow{font-size:8px}.gs-heading p{font-size:10px}.gs-top-link{margin-left:60px;font-size:12px}.gs-metrics{gap:9px}.gs-metrics>div{padding:12px;gap:8px}.gs-metric-icon{width:32px;height:32px;font-size:18px}.gs-metrics strong{font-size:21px}.gs-metrics small{font-size:9px}.gs-repositories{grid-template-columns:1fr}.gs-panel{padding:20px}}
+@media(prefers-reduced-motion:reduce){.gs *{animation:none!important;transition:none!important}}
+[data-bs-theme=dark] .gs{--gs-ink:#e1ddec;--gs-muted:#a79eb8;--gs-line:#3b344c}[data-bs-theme=dark] .gs-hero{background:#282237;border-color:#493c60}[data-bs-theme=dark] .gs-auto-editor,[data-bs-theme=dark] .gs-log pre,[data-bs-theme=dark] .gs-empty{background:#282337}
+.gs-url,.gs-repo-properties,.gs-job-message,.gs-switch,.gs-button,.gs-editor-form>label{font-size:12px}.gs-url,.gs-job-message{color:#82798f}.gs-repo-properties code{font-size:11px}.gs-attempt,.gs-next,.gs-metrics small,.gs-footnote,.gs-form-note{font-size:11px}.gs-switch small,.gs-editor-form label>small,.gs-optional,.gs-editor-heading p{font-size:10px}.gs-editor-form input:not([type=hidden]):not([type=checkbox]){font-size:12px}.gs-status{font-size:11px}.gs-attempt>span,.gs-next,.gs-footnote,.gs-form-note,.gs-editor-form label>small{color:#91859f}.gs-error-text{color:#bd6262}
+</style>
+<div class="gs" data-git-sync data-status-url="/glpi/plugins/pluginsync/Statuses?page=1">
+  <header class="gs-hero">
+    <div class="gs-brand-icon" aria-hidden="true"><svg viewBox="0 0 24 24" aria-hidden="true" focusable="false">
+<circle cx="6" cy="5" r="2.5"/><circle cx="18" cy="6" r="2.5"/><circle cx="6" cy="19" r="2.5"/><path d="M6 7.5v9M18 8.5v2c0 4-12 0-12 6"/>
+</svg>
+</div>
+    <div class="gs-heading"><span class="gs-eyebrow">VOS DÉPÔTS, AU MÊME ENDROIT</span><h1>Git Sync<span class="gs-admin">Administration</span></h1>
+      <p>Clonez, synchronisez et déployez vos dépôts en un clic.</p></div>
+    <a class="gs-top-link" href="#preview-plugins/pluginsync/Admin?page=1#gs-editor"><svg viewBox="0 0 24 24" aria-hidden="true" focusable="false">
+<path d="M12 5v14M5 12h14"/>
+</svg>
+ Ajouter un dépôt</a>
+  </header>
+        <section class="gs-metrics" aria-label="Résumé">
+    <div><span class="gs-metric-icon gs-purple"><svg viewBox="0 0 24 24" aria-hidden="true" focusable="false">
+<path d="M6 4h6l2 3h7v10M3 8h6l2 3h8v10H3Z"/>
+</svg>
+</span><span><strong>4</strong><small>Dépôts configurés</small></span></div>
+    <div><span class="gs-metric-icon gs-blue"><svg viewBox="0 0 24 24" aria-hidden="true" focusable="false">
+<path d="M20 8a8 8 0 0 0-14-2L3 9m0-5v5h5M4 16a8 8 0 0 0 14 2l3-3m0 5v-5h-5"/>
+</svg>
+</span><span><strong data-count-running>1</strong><small>En cours</small></span></div>
+    <div><span class="gs-metric-icon gs-green"><svg viewBox="0 0 24 24" aria-hidden="true" focusable="false">
+<path d="m5 12 4 4L19 6"/>
+</svg>
+</span><span><strong data-count-success>1</strong><small>Derniers essais réussis</small></span></div>
+    <div><span class="gs-metric-icon gs-red"><svg viewBox="0 0 24 24" aria-hidden="true" focusable="false">
+<circle cx="12" cy="12" r="9"/><path d="M12 7v6m0 4h.01"/>
+</svg>
+</span><span><strong data-count-error>1</strong><small>À vérifier</small></span></div>
+  </section>
+  <div class="gs-layout">
+    <main class="gs-main">
+      <div class="gs-section-title"><h2>Mes dépôts <span>4</span></h2><span data-live-indicator class="gs-live">● Suivi en direct</span></div>
+      <div class="gs-repositories">
+                              <article class="gs-repo" data-job-id="1">
+          <div class="gs-repo-top"><div class="gs-repo-symbol"><svg viewBox="0 0 24 24" aria-hidden="true" focusable="false">
+<path d="m12 2 10 10-10 10L2 12Z"/><circle cx="9" cy="8" r="1.5"/><circle cx="15" cy="13" r="1.5"/><path d="M9 9.5V17M10 9l4 3"/>
+</svg>
+</div><span data-job-status class="gs-status gs-status-success">Succès</span></div>
+          <h3>Plugins GLPI</h3><p class="gs-url" title="https://github.com/darkelle24/glpi-plugin.git">https://github.com/darkelle24/glpi-plugin.git</p>
+          <div class="gs-repo-properties">
+            <div><svg viewBox="0 0 24 24" aria-hidden="true" focusable="false">
+<circle cx="6" cy="5" r="2.5"/><circle cx="18" cy="6" r="2.5"/><circle cx="6" cy="19" r="2.5"/><path d="M6 7.5v9M18 8.5v2c0 4-12 0-12 6"/>
+</svg>
+<span>main</span></div>
+            <div title="/mnt/Apps/GLPI/repos/glpi-plugin"><svg viewBox="0 0 24 24" aria-hidden="true" focusable="false">
+<path d="M3 6h6l2 3h10v10H3Z"/>
+</svg>
+<code>/mnt/Apps/GLPI/repos/glpi-plugin</code></div>
+            <div><svg viewBox="0 0 24 24" aria-hidden="true" focusable="false">
+<rect x="3" y="5" width="18" height="14" rx="2"/><path d="m7 9 3 3-3 3m6 0h4"/>
+</svg>
+<span>deploy.sh</span></div>
+          </div>
+          <p data-job-message class="gs-job-message ">Dépôt synchronisé et script terminé avec succès.</p>
+          <div class="gs-attempt"><span>Dernier essai</span><time data-job-time datetime="2026-10-28T10:42:00Z">28/10/2026 10:42</time></div>
+          <form onsubmit="return false" method="post" action="/glpi/plugins/pluginsync/Job" class="gs-auto-form">
+            <input type="hidden" name="sync_csrf" value="DEMO"><input type="hidden" name="action" value="toggle"><input type="hidden" name="id" value="1"><input type="hidden" name="page" value="1">
+            <label class="gs-switch"><input data-auto-submit data-busy-control type="checkbox" name="auto_pull" value="1" checked ><span class="gs-switch-track" aria-hidden="true"></span><span>Pull automatique<small>Toutes les 15 min</small></span></label>
+            <button class="gs-auto-save" type="submit" data-busy-control >Appliquer</button>
+          </form>
+          <p class="gs-next">Prochain passage : <time data-job-next datetime="2026-10-28T10:57:00Z">28/10/2026 10:57</time></p>
+          <div class="gs-actions">
+            <form onsubmit="return false" method="post" action="/glpi/plugins/pluginsync/Job"><input type="hidden" name="sync_csrf" value="DEMO"><input type="hidden" name="action" value="run"><input type="hidden" name="id" value="1"><input type="hidden" name="page" value="1">
+              <button data-busy-control class="gs-button gs-button-primary" type="submit" ><svg viewBox="0 0 24 24" aria-hidden="true" focusable="false">
+<path d="M20 8a8 8 0 0 0-14-2L3 9m0-5v5h5M4 16a8 8 0 0 0 14 2l3-3m0 5v-5h-5"/>
+</svg>
+ Synchroniser</button></form>
+            <a data-edit-link class="gs-button gs-button-light " href="#preview-plugins/pluginsync/Admin?page=1&amp;edit=1#gs-editor" title="Modifier Plugins GLPI"><svg viewBox="0 0 24 24" aria-hidden="true" focusable="false">
+<path d="m16 3 5 5-12 12-6 1 1-6Zm-2 2 5 5"/>
+</svg>
+<span class="gs-sr-only">Modifier</span></a>
+            <a class="gs-button gs-button-light" href="#preview-plugins/pluginsync/Admin?page=1&amp;logs=1#gs-log" title="Dernier journal"><svg viewBox="0 0 24 24" aria-hidden="true" focusable="false">
+<path d="M5 3h9l5 5v13H5Zm9 0v6h5M8 13h8m-8 4h6"/>
+</svg>
+<span class="gs-sr-only">Journal</span></a>
+          </div>
+        </article>
+                              <article class="gs-repo" data-job-id="2">
+          <div class="gs-repo-top"><div class="gs-repo-symbol"><svg viewBox="0 0 24 24" aria-hidden="true" focusable="false">
+<path d="m12 2 10 10-10 10L2 12Z"/><circle cx="9" cy="8" r="1.5"/><circle cx="15" cy="13" r="1.5"/><path d="M9 9.5V17M10 9l4 3"/>
+</svg>
+</div><span data-job-status class="gs-status gs-status-running">En cours</span></div>
+          <h3>Thème intranet</h3><p class="gs-url" title="https://github.com/exemple/theme-intranet.git">https://github.com/exemple/theme-intranet.git</p>
+          <div class="gs-repo-properties">
+            <div><svg viewBox="0 0 24 24" aria-hidden="true" focusable="false">
+<circle cx="6" cy="5" r="2.5"/><circle cx="18" cy="6" r="2.5"/><circle cx="6" cy="19" r="2.5"/><path d="M6 7.5v9M18 8.5v2c0 4-12 0-12 6"/>
+</svg>
+<span>main</span></div>
+            <div title="/mnt/Apps/GLPI/repos/theme-intranet"><svg viewBox="0 0 24 24" aria-hidden="true" focusable="false">
+<path d="M3 6h6l2 3h10v10H3Z"/>
+</svg>
+<code>/mnt/Apps/GLPI/repos/theme-intranet</code></div>
+            <div><svg viewBox="0 0 24 24" aria-hidden="true" focusable="false">
+<rect x="3" y="5" width="18" height="14" rx="2"/><path d="m7 9 3 3-3 3m6 0h4"/>
+</svg>
+<span>Sans script après synchronisation</span></div>
+          </div>
+          <p data-job-message class="gs-job-message ">Récupération des dernières modifications…</p>
+          <div class="gs-attempt"><span>Dernier essai</span><time data-job-time datetime="2026-10-28T10:42:00Z">28/10/2026 10:42</time></div>
+          <form onsubmit="return false" method="post" action="/glpi/plugins/pluginsync/Job" class="gs-auto-form">
+            <input type="hidden" name="sync_csrf" value="DEMO"><input type="hidden" name="action" value="toggle"><input type="hidden" name="id" value="2"><input type="hidden" name="page" value="1">
+            <label class="gs-switch"><input data-auto-submit data-busy-control type="checkbox" name="auto_pull" value="1"  disabled><span class="gs-switch-track" aria-hidden="true"></span><span>Pull automatique<small>Toutes les 15 min</small></span></label>
+            <button class="gs-auto-save" type="submit" data-busy-control disabled>Appliquer</button>
+          </form>
+          <p class="gs-next">Prochain passage : <time data-job-next datetime="">désactivé</time></p>
+          <div class="gs-actions">
+            <form onsubmit="return false" method="post" action="/glpi/plugins/pluginsync/Job"><input type="hidden" name="sync_csrf" value="DEMO"><input type="hidden" name="action" value="run"><input type="hidden" name="id" value="2"><input type="hidden" name="page" value="1">
+              <button data-busy-control class="gs-button gs-button-primary" type="submit" disabled><svg viewBox="0 0 24 24" aria-hidden="true" focusable="false">
+<path d="M20 8a8 8 0 0 0-14-2L3 9m0-5v5h5M4 16a8 8 0 0 0 14 2l3-3m0 5v-5h-5"/>
+</svg>
+ Synchroniser</button></form>
+            <a data-edit-link class="gs-button gs-button-light gs-disabled" href="#preview-plugins/pluginsync/Admin?page=1&amp;edit=2#gs-editor" title="Modifier Thème intranet"><svg viewBox="0 0 24 24" aria-hidden="true" focusable="false">
+<path d="m16 3 5 5-12 12-6 1 1-6Zm-2 2 5 5"/>
+</svg>
+<span class="gs-sr-only">Modifier</span></a>
+            <a class="gs-button gs-button-light" href="#preview-plugins/pluginsync/Admin?page=1&amp;logs=2#gs-log" title="Dernier journal"><svg viewBox="0 0 24 24" aria-hidden="true" focusable="false">
+<path d="M5 3h9l5 5v13H5Zm9 0v6h5M8 13h8m-8 4h6"/>
+</svg>
+<span class="gs-sr-only">Journal</span></a>
+          </div>
+        </article>
+                              <article class="gs-repo" data-job-id="3">
+          <div class="gs-repo-top"><div class="gs-repo-symbol"><svg viewBox="0 0 24 24" aria-hidden="true" focusable="false">
+<path d="m12 2 10 10-10 10L2 12Z"/><circle cx="9" cy="8" r="1.5"/><circle cx="15" cy="13" r="1.5"/><path d="M9 9.5V17M10 9l4 3"/>
+</svg>
+</div><span data-job-status class="gs-status gs-status-error">Erreur</span></div>
+          <h3>Connecteur inventaire</h3><p class="gs-url" title="https://github.com/exemple/inventory.git">https://github.com/exemple/inventory.git</p>
+          <div class="gs-repo-properties">
+            <div><svg viewBox="0 0 24 24" aria-hidden="true" focusable="false">
+<circle cx="6" cy="5" r="2.5"/><circle cx="18" cy="6" r="2.5"/><circle cx="6" cy="19" r="2.5"/><path d="M6 7.5v9M18 8.5v2c0 4-12 0-12 6"/>
+</svg>
+<span>main</span></div>
+            <div title="/mnt/Apps/GLPI/repos/inventory"><svg viewBox="0 0 24 24" aria-hidden="true" focusable="false">
+<path d="M3 6h6l2 3h10v10H3Z"/>
+</svg>
+<code>/mnt/Apps/GLPI/repos/inventory</code></div>
+            <div><svg viewBox="0 0 24 24" aria-hidden="true" focusable="false">
+<rect x="3" y="5" width="18" height="14" rx="2"/><path d="m7 9 3 3-3 3m6 0h4"/>
+</svg>
+<span>deploy.sh</span></div>
+          </div>
+          <p data-job-message class="gs-job-message gs-error-text">Le script a retourné une erreur. Consultez le journal.</p>
+          <div class="gs-attempt"><span>Dernier essai</span><time data-job-time datetime="2026-10-28T10:42:00Z">28/10/2026 10:42</time></div>
+          <form onsubmit="return false" method="post" action="/glpi/plugins/pluginsync/Job" class="gs-auto-form">
+            <input type="hidden" name="sync_csrf" value="DEMO"><input type="hidden" name="action" value="toggle"><input type="hidden" name="id" value="3"><input type="hidden" name="page" value="1">
+            <label class="gs-switch"><input data-auto-submit data-busy-control type="checkbox" name="auto_pull" value="1"  ><span class="gs-switch-track" aria-hidden="true"></span><span>Pull automatique<small>Toutes les 15 min</small></span></label>
+            <button class="gs-auto-save" type="submit" data-busy-control >Appliquer</button>
+          </form>
+          <p class="gs-next">Prochain passage : <time data-job-next datetime="">désactivé</time></p>
+          <div class="gs-actions">
+            <form onsubmit="return false" method="post" action="/glpi/plugins/pluginsync/Job"><input type="hidden" name="sync_csrf" value="DEMO"><input type="hidden" name="action" value="run"><input type="hidden" name="id" value="3"><input type="hidden" name="page" value="1">
+              <button data-busy-control class="gs-button gs-button-primary" type="submit" ><svg viewBox="0 0 24 24" aria-hidden="true" focusable="false">
+<path d="M20 8a8 8 0 0 0-14-2L3 9m0-5v5h5M4 16a8 8 0 0 0 14 2l3-3m0 5v-5h-5"/>
+</svg>
+ Synchroniser</button></form>
+            <a data-edit-link class="gs-button gs-button-light " href="#preview-plugins/pluginsync/Admin?page=1&amp;edit=3#gs-editor" title="Modifier Connecteur inventaire"><svg viewBox="0 0 24 24" aria-hidden="true" focusable="false">
+<path d="m16 3 5 5-12 12-6 1 1-6Zm-2 2 5 5"/>
+</svg>
+<span class="gs-sr-only">Modifier</span></a>
+            <a class="gs-button gs-button-light" href="#preview-plugins/pluginsync/Admin?page=1&amp;logs=3#gs-log" title="Dernier journal"><svg viewBox="0 0 24 24" aria-hidden="true" focusable="false">
+<path d="M5 3h9l5 5v13H5Zm9 0v6h5M8 13h8m-8 4h6"/>
+</svg>
+<span class="gs-sr-only">Journal</span></a>
+          </div>
+        </article>
+                              <article class="gs-repo" data-job-id="4">
+          <div class="gs-repo-top"><div class="gs-repo-symbol"><svg viewBox="0 0 24 24" aria-hidden="true" focusable="false">
+<path d="m12 2 10 10-10 10L2 12Z"/><circle cx="9" cy="8" r="1.5"/><circle cx="15" cy="13" r="1.5"/><path d="M9 9.5V17M10 9l4 3"/>
+</svg>
+</div><span data-job-status class="gs-status gs-status-idle">Jamais lancé</span></div>
+          <h3>Documentation interne</h3><p class="gs-url" title="https://github.com/exemple/documentation.git">https://github.com/exemple/documentation.git</p>
+          <div class="gs-repo-properties">
+            <div><svg viewBox="0 0 24 24" aria-hidden="true" focusable="false">
+<circle cx="6" cy="5" r="2.5"/><circle cx="18" cy="6" r="2.5"/><circle cx="6" cy="19" r="2.5"/><path d="M6 7.5v9M18 8.5v2c0 4-12 0-12 6"/>
+</svg>
+<span>main</span></div>
+            <div title="/mnt/Apps/GLPI/repos/documentation"><svg viewBox="0 0 24 24" aria-hidden="true" focusable="false">
+<path d="M3 6h6l2 3h10v10H3Z"/>
+</svg>
+<code>/mnt/Apps/GLPI/repos/documentation</code></div>
+            <div><svg viewBox="0 0 24 24" aria-hidden="true" focusable="false">
+<rect x="3" y="5" width="18" height="14" rx="2"/><path d="m7 9 3 3-3 3m6 0h4"/>
+</svg>
+<span>Sans script après synchronisation</span></div>
+          </div>
+          <p data-job-message class="gs-job-message "></p>
+          <div class="gs-attempt"><span>Dernier essai</span><time data-job-time datetime="">Aucun pour le moment</time></div>
+          <form onsubmit="return false" method="post" action="/glpi/plugins/pluginsync/Job" class="gs-auto-form">
+            <input type="hidden" name="sync_csrf" value="DEMO"><input type="hidden" name="action" value="toggle"><input type="hidden" name="id" value="4"><input type="hidden" name="page" value="1">
+            <label class="gs-switch"><input data-auto-submit data-busy-control type="checkbox" name="auto_pull" value="1" checked ><span class="gs-switch-track" aria-hidden="true"></span><span>Pull automatique<small>Toutes les 15 min</small></span></label>
+            <button class="gs-auto-save" type="submit" data-busy-control >Appliquer</button>
+          </form>
+          <p class="gs-next">Prochain passage : <time data-job-next datetime="2026-10-28T10:57:00Z">28/10/2026 10:57</time></p>
+          <div class="gs-actions">
+            <form onsubmit="return false" method="post" action="/glpi/plugins/pluginsync/Job"><input type="hidden" name="sync_csrf" value="DEMO"><input type="hidden" name="action" value="run"><input type="hidden" name="id" value="4"><input type="hidden" name="page" value="1">
+              <button data-busy-control class="gs-button gs-button-primary" type="submit" ><svg viewBox="0 0 24 24" aria-hidden="true" focusable="false">
+<path d="M20 8a8 8 0 0 0-14-2L3 9m0-5v5h5M4 16a8 8 0 0 0 14 2l3-3m0 5v-5h-5"/>
+</svg>
+ Synchroniser</button></form>
+            <a data-edit-link class="gs-button gs-button-light " href="#preview-plugins/pluginsync/Admin?page=1&amp;edit=4#gs-editor" title="Modifier Documentation interne"><svg viewBox="0 0 24 24" aria-hidden="true" focusable="false">
+<path d="m16 3 5 5-12 12-6 1 1-6Zm-2 2 5 5"/>
+</svg>
+<span class="gs-sr-only">Modifier</span></a>
+            <a class="gs-button gs-button-light" href="#preview-plugins/pluginsync/Admin?page=1&amp;logs=4#gs-log" title="Dernier journal"><svg viewBox="0 0 24 24" aria-hidden="true" focusable="false">
+<path d="M5 3h9l5 5v13H5Zm9 0v6h5M8 13h8m-8 4h6"/>
+</svg>
+<span class="gs-sr-only">Journal</span></a>
+          </div>
+        </article>
+            </div>
+                  <p class="gs-footnote">Une exécution à la fois pour protéger vos déploiements. Les heures sont affichées dans le fuseau de votre navigateur.</p>
+    </main>
+    <aside class="gs-panel gs-editor" id="gs-editor">
+      <div class="gs-editor-heading"><span class="gs-editor-icon"><svg viewBox="0 0 24 24" aria-hidden="true" focusable="false">
+<path d="M12 5v14M5 12h14"/>
+</svg>
+</span><div><h2>Nouveau dépôt</h2><p>Connectez un projet à Git Sync.</p></div></div>
+      <form onsubmit="return false" method="post" action="/glpi/plugins/pluginsync/Job" class="gs-editor-form">
+        <input type="hidden" name="sync_csrf" value="DEMO"><input type="hidden" name="action" value="save"><input type="hidden" name="id" value="0"><input type="hidden" name="page" value="1">
+        <label>Nom du dépôt<input name="name" required maxlength="80" placeholder="Mes plugins GLPI" value=""></label>
+        <label>Adresse du dépôt<input name="url" type="url" required maxlength="2048" placeholder="https://github.com/organisation/depot.git" value=""><small>URL HTTPS, sans mot de passe ni jeton.</small></label>
+        <label>Branche<input name="branch" required maxlength="100" placeholder="main" value="main"></label>
+        <label>Chemin de clonage<input name="path" required maxlength="400" placeholder="/mnt/Apps/GLPI/repos/mon-depot" value=""><small>Dans /mnt/Apps/GLPI/repos/ uniquement. Le dossier sera créé s'il n'existe pas.</small></label>
+        <label>Script après synchronisation <span class="gs-optional">facultatif</span><input name="script" maxlength="200" placeholder="deploy.sh" value=""><small>Fichier shell dans le dépôt, exécuté avec /bin/sh.</small></label>
+        <div class="gs-auto-editor"><label class="gs-switch"><input type="checkbox" name="auto_pull" value="1" ><span class="gs-switch-track" aria-hidden="true"></span><span>Pull automatique<small>Fonctionne même quand cette page est fermée.</small></span></label>
+          <label class="gs-interval">Fréquence <span><input name="interval_minutes" type="number" min="5" max="10080" value="15" required> minutes</span></label>
+        </div>
+        <p class="gs-form-note">Au clic, le script est exécuté même si le dépôt est déjà à jour. En automatique, il est exécuté après un changement ou après un précédent échec de déploiement.</p>
+        <button class="gs-button gs-button-primary gs-full" type="submit">Ajouter le dépôt</button>
+              </form>
+          </aside>
+  </div>
+  </div>
+
+</body></html>
