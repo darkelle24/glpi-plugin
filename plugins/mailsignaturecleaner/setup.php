@@ -8,6 +8,7 @@ function plugin_init_mailsignaturecleaner(): void
     require_once __DIR__ . '/bootstrap.php';
     $PLUGIN_HOOKS[Hooks::PRE_ITEM_ADD]['mailsignaturecleaner'] = [
         ITILFollowup::class => 'plugin_mailsignaturecleaner_pre_item_add',
+        Ticket::class => 'plugin_mailsignaturecleaner_pre_item_add',
     ];
     if (Session::haveRight('config', UPDATE)) {
         $PLUGIN_HOOKS[Hooks::CONFIG_PAGE]['mailsignaturecleaner'] = 'front/config.php';
@@ -17,7 +18,7 @@ function plugin_init_mailsignaturecleaner(): void
 function plugin_version_mailsignaturecleaner(): array
 {
     return [
-        'name' => 'Mail Signature Cleaner', 'version' => '1.1.4',
+        'name' => 'Mail Signature Cleaner', 'version' => '1.2.0',
         'author' => 'Mail Signature Cleaner contributors', 'license' => 'GPLv3+',
         'requirements' => ['glpi' => ['min' => '12.0.0', 'max' => '12.1.0'],
             'php' => ['min' => '8.3']],

@@ -127,6 +127,7 @@ $normalQuote = run($body . '<blockquote class="signature">Ancien message</blockq
 check($normalQuote['changed'] === false, 'history option does not weaken normal selector protection');
 // Lightweight hook contract doubles. This is not a GLPI database integration test.
 class ITILFollowup { public array $input = []; }
+class Ticket { public array $input = []; }
 class Config {
     public static array $values = [];
     public static function getConfigurationValues($context): array { return self::$values; }
@@ -174,4 +175,5 @@ Config::$values['selectors'] = '#custom';
 plugin_mailsignaturecleaner_install();
 check(Config::$values['selectors'] === '#custom', 'reinstall preserves settings');
 require __DIR__ . '/capture.php';
+require __DIR__ . '/colors.php';
 echo "PASS: $passed checks\n";

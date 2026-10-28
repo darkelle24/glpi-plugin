@@ -3,6 +3,7 @@
 | Statut | Sens |
 |---|---|
 | `cleaned` | Suppression autorisée ; résultat appliqué sauf en simulation |
+| `colors_normalized` | Couleurs du mail retirées pour hériter du thème ; `signature_status` conserve la décision sur les signatures |
 | `no_match` | Aucun élément ne correspond |
 | `ambiguous_cut` | Un même sélecteur de coupure trouve plusieurs repères ; original conservé |
 | `invalid_cut` | Le repère de coupure n'est pas un élément à l'intérieur du corps HTML |

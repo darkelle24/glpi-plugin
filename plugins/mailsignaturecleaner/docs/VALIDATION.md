@@ -2,6 +2,10 @@
 
 ## Vérifié localement
 
+Version **1.2.0**, 28 octobre 2026 : **93 assertions** sous PHP 8.3.36 et PHP 8.5.12. Les 71 contrôles précédents sont complétés par 22 vérifications : retrait des couleurs/fonds, héritage sans couleur fixe, option désactivée par défaut, idempotence, couleurs historiques, stylesheets, citations, images et URL intactes, `!important`, WebKit, styles avec chaînes contenant un point-virgule, commentaires/noms CSS échappés, variables et resets, texte brut et code échappé, marqueurs GLPI, indépendance des signatures, tickets initiaux mail, exclusion des saisies manuelles et simulation.
+
+Le thème est hérité par retrait des couleurs stockées, conformément au conteneur rich text du code GLPI audité. Le rendu sur l'instance GLPI réelle n'est pas testé de bout en bout ici. La recette doit comparer le même nouveau mail avec un compte en thème clair et un compte en thème sombre. Les anciens contenus ne sont pas repris automatiquement.
+
 - Audit des sources GLPI 12.0.0, sans modification du cœur.
 - Syntaxe de tous les fichiers PHP.
 - 71 assertions du lanceur `tests/run.php` : sélecteurs CSS, attributs et pseudo-classes ; UTF-8 ; absence de correspondance ; idempotence ; HTML échappé ; document complet et HTML incomplet ; suppression imbriquée ; citations ; marqueurs GLPI/personnalisés/commentaires ; pièces jointes et placeholders d'images du collecteur ; résultat vide ; limite proportionnelle ; limites de taille/nombre ; déclaration d'entité refusée ; configuration invalide ; contrat du hook avec doubles ; exclusion des saisies manuelles ; simulation ; configuration initiale et désinstallation ; coupure après un repère entre plusieurs parents, textes suivants, conservation du repère, ambiguïté, repère absent/invalide et protections ; reproduction d'un en-tête Outlook conservé, suppression explicite de l'historique et maintien des autres protections ; captures JSON, absence de capture par défaut, séparation entrée/proposition/sortie, règles et compteurs, exclusion des champs arbitraires et MIME, troncature, quota et capture sans application du nettoyage ; seuil 100 % avec maintien du refus de message vide et variante de style Outlook réellement reçue.
@@ -22,6 +26,8 @@ Version 1.1.3 : test du POST de diagnostic avec doubles des composants GLPI. Le 
 Version 1.1.4 : analyse d'une vraie capture 1.1.3 transmise pour le ticket de test. Le statut était `no_match`, la règle exacte copiée du navigateur trouvait zéro ancre et `before_html` était identique à `effective_html`. L'en-tête Outlook était déjà présent dans `before_html`. La nouvelle règle trouve une ancre ; le test reproduit `ratio_guard` à 95 %, puis `cleaned` à 100 % avec conservation de `fsdfs` et retrait de la signature et de l'ancien en-tête. La capture personnelle n'est pas embarquée dans l'archive ; une variante synthétique anonymisée est ajoutée aux régressions.
 
 ## Recette avant production
+
+Version 1.2.0 : activer les couleurs GLPI, décocher la simulation, importer un ticket et une réponse avec texte noir sur fond blanc. Les vérifier en thème sombre puis clair. Contrôler que la signature initiale est conservée, que le nettoyage des signatures des suivis reste réglé comme avant, et que liens/documents/images fonctionnent. Une saisie manuelle colorée doit rester intacte et la simulation doit conserver le corps original.
 
 1. Sur une instance GLPI 12.0.x de recette, installer et activer le plugin. Ouvrir sa configuration avec un profil autorisé, puis vérifier qu'un profil sans droit de configuration ne peut pas y accéder directement.
 2. Vérifier le démarrage désactivé / simulation activée. Tester un HTML avec votre signature ; vérifier les correspondances et le code avant/après. Tester une règle erronée : enregistrement refusé, configuration précédente conservée.

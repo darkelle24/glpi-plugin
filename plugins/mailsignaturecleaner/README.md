@@ -1,10 +1,22 @@
-# Mail Signature Cleaner 1.1.4
+# Mail Signature Cleaner 1.2.0
 
 Plugin pour **GLPI 12.0.x / PHP ≥ 8.3**, interface en français. Dossier système : `mailsignaturecleaner`.
 
 ## Fonctionnement
 
-Le plugin retire les sous-arbres HTML correspondant à vos sélecteurs CSS des **nouveaux suivis de tickets créés par les collecteurs mail**. Il ne modifie pas le ticket initial, les suivis existants, les suivis manuels, les tâches, les solutions ni les messages SMTP sortants. Aucun changement du cœur de GLPI. Les données de configuration sont conservées dans `glpi_configs`, contexte `plugin:mailsignaturecleaner` ; aucune table supplémentaire.
+Le plugin nettoie les signatures des **nouveaux suivis de tickets créés par les collecteurs mail**. Depuis 1.2.0, une option indépendante permet aussi aux nouveaux tickets et suivis reçus par mail d'hériter des couleurs du thème GLPI. Le nettoyage des signatures reste exclu des tickets initiaux. Les contenus existants, saisies manuelles, tâches et solutions ne sont pas modifiés. Les notifications sortantes peuvent refléter le nouveau contenu enregistré. Aucun changement du cœur de GLPI. La configuration reste dans `glpi_configs`, contexte `plugin:mailsignaturecleaner`.
+
+## Lisibilité en thème sombre ou clair (nouveau en 1.2.0)
+
+Activer **Utiliser les couleurs du thème GLPI pour le texte des mails (tickets et suivis)**, enregistrer et décocher le mode simulation pour appliquer la modification aux prochains imports. L'option est désactivée par défaut et ne reprend pas les anciens contenus. Elle fonctionne indépendamment de **Activer le nettoyage des signatures des suivis** ; le mode simulation est commun aux deux fonctions.
+
+Le plugin ne choisit pas une couleur fixe au nom du compte qui lance le collecteur. Il retire les couleurs et fonds de l'expéditeur pour que le HTML enregistré hérite du thème de **chaque lecteur** : texte clair en thème sombre, texte sombre en thème clair, selon la palette GLPI choisie. Les liens gardent l'apparence native des liens GLPI. Aucun réglage de préférence utilisateur n'est modifié.
+
+Le traitement retire les déclarations de couleur du texte, fonds et images de fond, ombres de texte, filtres, variables CSS du message et couleurs héritées des anciennes balises `font`/attributs `bgcolor`/`text`. Les feuilles de style embarquées ou liées par le mail sont retirées afin qu'elles ne réintroduisent pas des couleurs sur des classes. Les styles inline restants (gras, dimensions, marges, alignement…) sont conservés quand ils sont valides ; retirer une feuille de style peut aussi faire perdre une partie de sa mise en forme. Les styles inline mal formés sont retirés par prudence. Le texte, les tableaux, les URL, images et références de pièces jointes sont conservés. Les images intégrées ne sont pas recolorées : un logo noir contenu dans une image reste noir.
+
+Les couleurs sont également normalisées dans les citations conservées : leur protection empêche la suppression du contenu, pas le changement de sa présentation. La limite proportionnelle et les repères de signature ne conditionnent pas cette normalisation. Les limites de taille et le refus des déclarations XML dangereuses restent appliqués ; les marqueurs GLPI sont vérifiés avant d'accepter la normalisation.
+
+Portée : uniquement les créations `Ticket` et `ITILFollowup` issues d'un collecteur, identifiées par `_mailgate` et `_auto_import`. Les saisies manuelles sont exclues. Les tickets initiaux gardent leur signature ; seule leur présentation peut changer. Le HTML transmis par les notifications peut lui aussi hériter des couleurs du client de messagerie.
 
 Sélecteurs multiples : un par ligne, évalués sur le même document avant suppression. Les correspondances imbriquées sont dédupliquées. Le champ de suppression normale retire l'élément correspondant et ses descendants. Depuis la version 1.1.0, un champ séparé permet de **couper tout ce qui suit un repère**, même hors de son parent. Le moteur Symfony CssSelector est celui déjà fourni par GLPI ; **aucun `composer install` requis**.
 
@@ -36,7 +48,7 @@ Régler la limite à **95 % pour cet exemple** : sa signature représente la maj
 
 Ce style n'est pas un identifiant universel de signature : une autre mise en forme peut le modifier ou le réutiliser ailleurs. Tester les variantes réellement reçues par GLPI. Un identifiant dédié dans le modèle de signature reste préférable à long terme.
 
-Le hook exige un `ITILFollowup`, `itemtype=Ticket`, `_mailgate>0` et `_auto_import`. Le simple type de demande « e-mail » n'est pas une preuve suffisante. Le collecteur GLPI utilise le même chemin pour IMAP et POP : le plugin s'applique aux deux, sans distinction du protocole. Les imports tiers qui reproduiraient volontairement ces champs pourraient aussi déclencher le nettoyage. Ce filtre est un ciblage fonctionnel, pas une frontière de sécurité pour une API.
+Le nettoyage des signatures exige un `ITILFollowup`, `itemtype=Ticket`, `_mailgate>0` et `_auto_import`. La normalisation des couleurs accepte aussi un `Ticket` avec les deux marqueurs d'origine mail. Le type de demande « e-mail » seul n'est pas suffisant. Les collecteurs IMAP et POP partagent ce chemin. Les imports tiers reproduisant ces champs peuvent aussi déclencher le traitement : ce filtre est un ciblage fonctionnel, pas une frontière de sécurité pour une API.
 
 ## Installation
 
@@ -63,7 +75,7 @@ En cas d'erreur de capture dans le hook, la version 1.1.3 force également son �
 
 Le journal technique habituel ne contient pas les corps des mails. Pour diagnostiquer une signature ou un en-tête conservé :
 
-1. Installer la version 1.1.4, redémarrer le conteneur et ouvrir la configuration.
+1. Installer la version 1.2.0, redémarrer le conteneur et ouvrir la configuration.
 2. Cocher **Diagnostic temporaire : capturer le HTML avant/après**, enregistrer, puis envoyer une nouvelle réponse à un ticket de test et laisser le collecteur la traiter.
 3. Récupérer le nouveau fichier `capture-<date UTC>-<identifiant>.json` dans `GLPI_LOG_DIR/mailsignaturecleaner-debug/`, généralement `/var/glpi/files/_log/mailsignaturecleaner-debug/` sur l'image officielle.
 4. Décocher le diagnostic après la reproduction. Retirer les captures après analyse : elles contiennent les corps des messages et peuvent inclure des coordonnées et informations confidentielles.
@@ -81,7 +93,7 @@ Champs principaux du JSON :
 | `ticket_id`, `collector_id`, `captured_at_utc` | Contexte du suivi et date UTC |
 | `body_limits` | Taille initiale de chaque corps et indication de troncature |
 
-La capture fonctionne même lorsque le nettoyage est désactivé : le moteur calcule alors une proposition sans l'appliquer. Elle s'applique toujours uniquement aux suivis de tickets issus du collecteur ; elle ne capture ni nouveaux tickets, ni suivis manuels, ni tests collés dans l'administration. Elle ne dépend pas du réglage « Journal technique » ni de l'activation des journaux GLPI.
+La capture fonctionne même lorsque le nettoyage est désactivé. Depuis 1.2.0, elle couvre aussi les tickets initiaux reçus par collecteur et distingue `item_kind=Ticket` de `ITILFollowup`. L'identifiant du ticket initial est encore inconnu au hook et vaut 0. Les champs `colors_normalized`, `signature_status` et la règle `inherit_mail_colors` précisent les transformations proposées. Le corps effectif reste inchangé en simulation ou si aucune transformation n'est activée. Les saisies manuelles et tests collés dans l'administration restent exclus. La capture ne dépend pas du réglage « Journal technique » ni de l'activation des journaux GLPI.
 
 Les fichiers sont créés avec des permissions privées (dossier 0700, fichiers 0600 sous Linux). Le répertoire de logs doit rester hors de la racine web publique. Maximum **20 captures**, avec **256 Kio par version de corps** : au-delà, les captures s'arrêtent sans bloquer le collecteur. Les octets UTF-8 incomplets ou invalides sont remplacés dans le JSON. Les fichiers existants ne sont ni écrasés ni supprimés automatiquement. Pour recommencer après 20 fichiers, archiver ou retirer les anciennes captures ; l'option décochée ne supprime pas les fichiers. La désinstallation conserve également ces fichiers de diagnostic, comme les journaux GLPI.
 

@@ -19,3 +19,5 @@ Vérification du 26 octobre 2026, sur le tag officiel **12.0.0**, commit `cd812f
 | TrueNAS SCALE | [Installation des Custom Apps](https://apps.truenas.com/managing-apps/installing-custom-apps/) : installation via YAML Docker Compose depuis Apps. Les écrans exacts dépendent de la version. |
 
 Le ciblage `_mailgate` est confirmé dans la version auditée mais reste un champ interne du collecteur ; revalider ce contrat après mise à jour de GLPI. La déclaration de compatibilité exclut 12.1 et ultérieur.
+
+Complément 1.2.0 : `MailCollector.php` transmet `_mailgate` et `_auto_import` à `Ticket::add()` pour une création initiale et à `ITILFollowup::add()` pour une réponse. Le hook `PRE_ITEM_ADD` est enregistré pour les deux classes, mais la suppression des signatures reste limitée aux suivis. Le fichier [css/includes/components/_richtext.scss](https://github.com/glpi-project/glpi/blob/12.0.0/css/includes/components/_richtext.scss) décrit `.rich_text_container`. La normalisation retire les couleurs d'origine pour laisser le thème du lecteur s'appliquer ; elle ne lit pas les préférences du compte exécutant le collecteur.

@@ -53,18 +53,21 @@ final class Capture
                 $fields[$key] = substr($value, 0, self::MAX_FIELD_BYTES);
             }
             $record = [
-                'captured_at_utc' => gmdate('c'), 'plugin_version' => '1.1.4',
+                'captured_at_utc' => gmdate('c'), 'plugin_version' => '1.2.0',
                 'diagnostic_test' => !empty($input['_msc_diagnostic_test']),
-                'stage' => 'ITILFollowup pre_item_add; after native MailCollector processing',
+                'stage' => 'pre_item_add; after native MailCollector processing',
+                'item_kind' => $input['_msc_item_kind'] ?? 'ITILFollowup',
                 'ticket_id' => (int) ($input['items_id'] ?? 0),
                 'collector_id' => (int) ($input['_mailgate'] ?? 0),
                 'enabled' => $settings['enabled'] === '1', 'dry_run' => $settings['dry_run'] === '1',
                 'status' => $result['status'], 'removed' => $result['removed'],
                 'protected' => $result['protected'], 'matches' => $result['matches'],
+                'colors_normalized' => $result['colors_normalized'] ?? false,
+                'signature_status' => $result['signature_status'] ?? $result['status'],
                 'warnings' => $result['warnings'],
                 'rules' => array_intersect_key($settings, array_flip(['selectors',
                     'cut_after_selectors', 'cut_remove_quotes', 'protect_selectors',
-                    'markers', 'max_removed_percent'])),
+                    'markers', 'max_removed_percent', 'inherit_mail_colors'])),
                 'body_limits' => $sizes,
             ] + $fields;
             $json = json_encode($record, JSON_PRETTY_PRINT | JSON_UNESCAPED_UNICODE

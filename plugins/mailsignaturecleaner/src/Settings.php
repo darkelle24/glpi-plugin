@@ -12,6 +12,7 @@ final class Settings
             'cut_after_selectors' => '',
             'cut_remove_quotes' => '0',
             'debug_capture' => '0',
+            'inherit_mail_colors' => '0',
             'protect_selectors' => "blockquote\n.gmail_quote\n.moz-cite-prefix\n#divRplyFwdMsg",
             'markers' => "=-=-=-=\n=_=_=_=", 'max_removed_percent' => '80'];
     }
@@ -30,7 +31,7 @@ final class Settings
     public static function validate(array $data): array
     {
         $out = self::defaults();
-        foreach (['enabled', 'dry_run', 'log', 'cut_remove_quotes', 'debug_capture'] as $key) {
+        foreach (['enabled', 'dry_run', 'log', 'cut_remove_quotes', 'debug_capture', 'inherit_mail_colors'] as $key) {
             $out[$key] = ($data[$key] ?? '') === '1' ? '1' : '0';
         }
         $converter = new \Symfony\Component\CssSelector\CssSelectorConverter();

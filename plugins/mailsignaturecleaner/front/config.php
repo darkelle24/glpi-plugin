@@ -92,9 +92,9 @@ if (($_SERVER['REQUEST_METHOD'] ?? 'GET') === 'POST') {
 }
 Html::header('Mail Signature Cleaner', '', 'config', 'plugins');
 echo '<div class="container-xl"><h1>Mail Signature Cleaner</h1>';
-echo '<p>Version du formulaire : <strong>1.1.4</strong></p>';
-echo '<p>Nettoyage des nouveaux suivis de tickets issus des collecteurs mail. '
-    . 'Les tickets initiaux et les suivis saisis dans GLPI sont exclus.</p>';
+echo '<p>Version du formulaire : <strong>1.2.0</strong></p>';
+echo '<p>Nettoyage des signatures des suivis reçus par collecteur mail, et option de couleurs '
+    . 'GLPI pour les nouveaux tickets et suivis reçus par mail. Les saisies manuelles sont exclues.</p>';
 if ($message !== '') {
     echo '<div class="alert alert-success" role="status">' . msc_escape($message) . '</div>';
 }
@@ -108,11 +108,13 @@ echo '<div class="alert alert-info"><strong>Diagnostic des captures</strong><br>
     . 'Chemin utilisé par GLPI : <code>' . msc_escape(Capture::directory()) . '</code><br>'
     . 'Capture actuellement enregistrée : <strong>'
     . (Settings::load()['debug_capture'] === '1' ? 'activée' : 'désactivée') . '</strong>. '
-    . 'Les captures concernent une nouvelle réponse collectée ajoutée en suivi à un ticket existant. '
-    . 'Un nouveau ticket, un suivi manuel ou un test avant/après dans cette page ne déclenche pas la capture mail.<br>'
+    . 'Les captures concernent les tickets et suivis reçus par le collecteur. '
+    . 'Un suivi manuel ou un test avant/après dans cette page ne déclenche pas la capture mail.<br>'
     . '<button class="btn btn-secondary mt-2" type="submit" name="action" value="diagnostic">'
     . 'Tester l’écriture d’une capture fictive</button></div>';
-foreach (['enabled' => 'Activer le nettoyage', 'dry_run' => 'Simulation : conserver le contenu des suivis',
+foreach (['enabled' => 'Activer le nettoyage des signatures des suivis',
+    'inherit_mail_colors' => 'Utiliser les couleurs du thème GLPI pour le texte des mails (tickets et suivis)',
+    'dry_run' => 'Simulation : conserver le contenu des tickets et suivis',
     'cut_remove_quotes' => 'Coupure : supprimer aussi l’historique cité et les en-têtes Outlook après le repère',
     'debug_capture' => 'Diagnostic temporaire : capturer le HTML avant/après (20 fichiers maximum)',
     'log' => 'Journal technique sans contenu des messages'] as $key => $label) {
@@ -124,6 +126,11 @@ foreach (['enabled' => 'Activer le nettoyage', 'dry_run' => 'Simulation : conser
 echo '<p>Le diagnostic écrit le contenu des mails dans <code>GLPI_LOG_DIR/mailsignaturecleaner-debug/</code>, '
     . 'même si le nettoyage est désactivé ou en simulation. Maximum : 20 captures, 256 Kio par version du corps. '
     . 'Il ne capture pas le mail MIME original. Désactivez-le après le test et retirez les fichiers après analyse.</p>';
+echo '<p>L’option de couleurs retire les couleurs du texte et les fonds imposés par le mail, '
+    . 'y compris dans les citations, pour laisser chaque utilisateur lire avec son propre thème GLPI. '
+    . 'Les feuilles de style du mail sont retirées ; la mise en forme inline restante est conservée. '
+    . 'Les images et pièces jointes ne sont pas recolorées. Cette option est indépendante du nettoyage '
+    . 'des signatures et respecte le mode simulation. Elle agit seulement sur les prochains imports.</p>';
 foreach (['selectors' => 'Sélecteurs CSS à supprimer — un par ligne',
     'cut_after_selectors' => 'Couper tout ce qui suit ce repère CSS — un par ligne (optionnel)',
     'protect_selectors' => 'Sélecteurs CSS à protéger — un par ligne',
@@ -158,6 +165,7 @@ echo '<label class="form-label" for="sample">HTML à tester</label><textarea cla
 echo '<button class="btn btn-secondary my-3" type="submit" name="action" value="test">Tester sans enregistrer</button></form>';
 if ($result !== null) {
     $statuses = ['cleaned' => 'Nettoyage appliqué', 'no_match' => 'Aucune correspondance',
+        'colors_normalized' => 'Couleurs de l’expéditeur retirées : thème GLPI hérité',
         'ambiguous_cut' => 'Refus : plusieurs points de coupure pour une même règle',
         'invalid_cut' => 'Refus : point de coupure hors du corps du message',
         'protected' => 'Correspondances protégées', 'empty_guard' => 'Refus : message vidé',

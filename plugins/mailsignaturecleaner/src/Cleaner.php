@@ -12,7 +12,39 @@ final class Cleaner
     public const MAX_BYTES = 1048576;
 
     /** Pure operation shared by the mail hook and the preview page. */
-    public function clean(string $html, array $settings): array
+    public function clean(string $html, array $settings, bool $signatures = true): array
+    {
+        $result = $this->cleanSignatures($html, $signatures ? $settings
+            : array_replace($settings, ['selectors' => '', 'cut_after_selectors' => '']));
+        $result['signature_status'] = $signatures ? $result['status'] : 'not_requested';
+        $result['colors_normalized'] = false;
+        if (($settings['inherit_mail_colors'] ?? '0') !== '1' || $result['status'] === 'error') {
+            return $result;
+        }
+        try {
+            $colors = Colors::normalize($result['html']);
+            foreach (array_unique(array_merge(['=-=-=-=', '=_=_=_='],
+                Settings::lines((string) ($settings['markers'] ?? '')))) as $marker) {
+                if (substr_count($result['html'], $marker) !== substr_count($colors['html'], $marker)) {
+                    $result['warnings'][] = 'Couleurs conservées : la normalisation modifierait un marqueur.';
+                    return $result;
+                }
+            }
+            if ($colors['changed']) {
+                $result['html'] = $colors['html'];
+                $result['changed'] = $result['html'] !== $html;
+                $result['colors_normalized'] = true;
+                if ($result['status'] !== 'cleaned') {
+                    $result['status'] = 'colors_normalized';
+                }
+            }
+        } catch (\Throwable $e) {
+            $result['warnings'][] = 'Normalisation des couleurs abandonnée ; contenu précédent conservé.';
+        }
+        return $result;
+    }
+
+    private function cleanSignatures(string $html, array $settings): array
     {
         $result = ['html' => $html, 'changed' => false, 'status' => 'unchanged',
             'removed' => 0, 'protected' => 0, 'matches' => [], 'warnings' => []];

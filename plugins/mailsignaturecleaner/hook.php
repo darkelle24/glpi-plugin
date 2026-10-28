@@ -22,13 +22,15 @@ function plugin_mailsignaturecleaner_uninstall(): bool
 function plugin_mailsignaturecleaner_pre_item_add($item): void
 {
     require_once __DIR__ . '/bootstrap.php';
-    if (!$item instanceof ITILFollowup || !is_array($item->input)) {
+    $followup = $item instanceof ITILFollowup;
+    $ticket = $item instanceof Ticket;
+    if ((!$followup && !$ticket) || !is_array($item->input)) {
         return;
     }
     $input = $item->input;
     // _mailgate + _auto_import are carried by MailCollector::buildTicket().
     // Request type alone also occurs in manually entered followups: do not use it.
-    if (($input['itemtype'] ?? '') !== 'Ticket'
+    if (($followup && ($input['itemtype'] ?? '') !== 'Ticket')
         || (int) ($input['_mailgate'] ?? 0) <= 0
         || empty($input['_auto_import'])
         || !is_string($input['content'] ?? null)) {
@@ -36,16 +38,20 @@ function plugin_mailsignaturecleaner_pre_item_add($item): void
     }
     try {
         $settings = Settings::load();
-        if ($settings['enabled'] !== '1' && $settings['debug_capture'] !== '1') {
+        if (($settings['enabled'] !== '1' || $ticket)
+            && $settings['inherit_mail_colors'] !== '1' && $settings['debug_capture'] !== '1') {
             return;
         }
-        $result = (new Cleaner())->clean($input['content'], $settings);
-        if ($settings['enabled'] === '1' && $settings['dry_run'] !== '1' && $result['changed']) {
+        $result = (new Cleaner())->clean($input['content'], $settings, $followup && $settings['enabled'] === '1');
+        if (($settings['enabled'] === '1' || $settings['inherit_mail_colors'] === '1')
+            && $settings['dry_run'] !== '1' && $result['changed']) {
             $item->input['content'] = $result['html'];
         }
         if ($settings['debug_capture'] === '1') {
             try {
-                Capture::write($input, $settings, $result, $item->input['content']);
+                $captureInput = $input;
+                $captureInput['_msc_item_kind'] = $ticket ? 'Ticket' : 'ITILFollowup';
+                Capture::write($captureInput, $settings, $result, $item->input['content']);
             } catch (\Throwable $captureError) {
                 // Diagnostic I/O errors must never interrupt collection or cleaning.
                 $captureFailure = 'Diagnostic capture failed: ' . $captureError->getMessage();
@@ -58,7 +64,8 @@ function plugin_mailsignaturecleaner_pre_item_add($item): void
             Toolbox::logInFile('mailsignaturecleaner', sprintf(
                 "collector=%d ticket=%d mode=%s status=%s removed=%d protected=%d\n",
                 (int) $input['_mailgate'], (int) ($input['items_id'] ?? 0),
-                $settings['enabled'] !== '1' ? 'disabled' : ($settings['dry_run'] === '1' ? 'simulation' : 'active'),
+                ($settings['enabled'] !== '1' && $settings['inherit_mail_colors'] !== '1')
+                    ? 'disabled' : ($settings['dry_run'] === '1' ? 'simulation' : 'active'),
                 $result['status'], $result['removed'], $result['protected']
             ));
         }
